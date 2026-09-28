@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <main>
@@ -5,12 +7,10 @@ export default function Home() {
         <span className="eyebrow">ProcessTwin AI</span>
         <h1>Digital Twin de Processos</h1>
         <p>
-          Base oficial do ProcessTwin: Next.js, TypeScript e Supabase preparados
-          para receber o motor de process mining, análise de gargalos e Simulation Lab.
+          Envie um event log real e transforme dados operacionais em processo reconstruído,
+          gargalo, melhoria simulada e impacto mensurável.
         </p>
-        <div className="status">
-          Infraestrutura inicial configurada. Próxima etapa: modelagem do domínio e banco de dados.
-        </div>
+        <div className="actions"><Link className="button" href="/processes/new">Importar CSV</Link><Link className="button secondary" href="/demo">Ver demonstração</Link></div>
       </section>
     </main>
   );
