@@ -89,6 +89,8 @@ export type SimulationResult = {
 
 export type CoreCycleResult = {
   model: ProcessModel;
+  metrics: ProcessMetrics;
   bottleneck: Bottleneck | null;
   simulation: SimulationResult;
+  impact: SimulationResult["impactSummary"];
 };

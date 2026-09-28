@@ -12,7 +12,7 @@ const pct = (value: number) => `${value.toFixed(1)}%`;
 
 export default function DemoPage() {
   const result = runCoreCycle(demoEvents, demoScenario);
-  const { model, bottleneck, simulation } = result;
+  const { model, metrics, bottleneck, simulation, impact } = result;
 
   return (
     <main style={{ display: "block", maxWidth: 1180, margin: "0 auto" }}>
@@ -27,10 +27,11 @@ export default function DemoPage() {
 
       <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(190px,1fr))", gap: 12, marginBottom: 18 }}>
         {[
-          ["Casos", model.metrics.caseCount.toString()],
-          ["Eventos", model.metrics.eventCount.toString()],
-          ["Ciclo médio", duration(model.metrics.avgCycleSeconds)],
-          ["Retrabalho", pct(model.metrics.reworkRatePct)],
+          ["Casos", metrics.caseCount.toString()],
+          ["Eventos", metrics.eventCount.toString()],
+          ["Ciclo médio", duration(metrics.avgCycleSeconds)],
+          ["P95 do ciclo", duration(metrics.p95CycleSeconds)],
+          ["Retrabalho", pct(metrics.reworkRatePct)],
         ].map(([label, value]) => (
           <article className="card" style={{ width: "100%", padding: 20 }} key={label}>
             <p style={{ margin: 0 }}>{label}</p>
@@ -41,6 +42,10 @@ export default function DemoPage() {
 
       <section className="card" style={{ width: "100%", marginBottom: 18 }}>
         <span className="eyebrow">Processo reconstruído</span>
+        <p>
+          {model.nodes.length} atividades, {model.edges.length} transições e {model.variants.length}{" "}
+          variantes descobertas no log.
+        </p>
         <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap", marginTop: 20 }}>
           {model.variants[0]?.path.map((activity, index, path) => (
             <div key={`${activity}-${index}`} style={{ display: "flex", gap: 10, alignItems: "center" }}>
@@ -76,7 +81,7 @@ export default function DemoPage() {
 
         <article className="card" style={{ width: "100%" }}>
           <span className="eyebrow">Impacto</span>
-          <h2>{simulation.impactSummary.hoursSavedPer100Cases.toFixed(1)} h</h2>
+          <h2>{impact.hoursSavedPer100Cases.toFixed(1)} h</h2>
           <p>Horas de ciclo economizadas a cada 100 casos no cenário demonstrativo.</p>
           <p>Ganho potencial de throughput: <strong>+{pct(simulation.deltas.throughputGainPct)}</strong></p>
           <p>SLA: <strong>{simulation.deltas.slaPercentagePoints >= 0 ? "+" : ""}{simulation.deltas.slaPercentagePoints.toFixed(1)} p.p.</strong></p>

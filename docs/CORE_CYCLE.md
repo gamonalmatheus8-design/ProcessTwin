@@ -17,8 +17,10 @@ event log
 - `findPrimaryBottleneck`: pontua atividades usando espera, volume e retrabalho.
 - `simulateImprovement`: aplica ajustes de redução de espera e capacidade às etapas.
 - `runCoreCycle`: compõe o pipeline completo.
-- `/api/demo-cycle`: expõe o ciclo em JSON e aceita POST de eventos.
+- `/api/demo-cycle`: expõe o ciclo em JSON e aceita POST de eventos no corpo `{ events, scenario? }`.
+  Sem cenário explícito, o Core Cycle simula uma redução de espera no gargalo detectado.
 - `/demo`: demonstra visualmente o ciclo usando um dataset controlado.
+- A suíte Vitest cobre mineração, gargalo, simulação, determinismo, casos extremos e a rota.
 
 ## Contrato mínimo de evento
 
@@ -39,7 +41,6 @@ A simulação desta primeira versão é baseada no tempo entre eventos observado
 
 1. Parser CSV com mapeamento de colunas.
 2. Persistência no Supabase.
-3. Testes unitários do engine.
-4. Interface interativa do Simulation Lab.
-5. Process Explorer em grafo.
-6. Evolução do modelo de simulação.
+3. Interface interativa do Simulation Lab.
+4. Process Explorer em grafo.
+5. Evolução do modelo de simulação.

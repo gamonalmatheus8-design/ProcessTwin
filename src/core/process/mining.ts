@@ -5,6 +5,7 @@ import type {
   ProcessNode,
   ProcessVariant,
 } from "./types";
+import { groupAndOrderEvents } from "./events";
 
 const toSeconds = (ms: number) => Math.max(0, ms / 1000);
 
@@ -15,7 +16,7 @@ const percentile = (values: number[], p: number) => {
   return sorted[Math.max(0, index)];
 };
 
-export function buildProcessModel(events: ProcessEvent[]): ProcessModel {
+export function buildProcessModel(events: readonly ProcessEvent[]): ProcessModel {
   if (!events.length) {
     return {
       nodes: [],
@@ -31,15 +32,7 @@ export function buildProcessModel(events: ProcessEvent[]): ProcessModel {
     };
   }
 
-  const cases = new Map<string, ProcessEvent[]>();
-  for (const event of events) {
-    if (!event.caseId?.trim() || !event.activity?.trim()) continue;
-    const ts = Date.parse(event.timestamp);
-    if (Number.isNaN(ts)) continue;
-    const list = cases.get(event.caseId) ?? [];
-    list.push(event);
-    cases.set(event.caseId, list);
-  }
+  const cases = groupAndOrderEvents(events);
 
   const nodeStats = new Map<
     string,
@@ -56,11 +49,7 @@ export function buildProcessModel(events: ProcessEvent[]): ProcessModel {
   const cycleTimes: number[] = [];
   let casesWithRework = 0;
 
-  for (const [caseId, caseEvents] of cases) {
-    const ordered = [...caseEvents].sort(
-      (a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp),
-    );
-    if (!ordered.length) continue;
+  for (const [caseId, ordered] of cases) {
 
     const activityCounts = new Map<string, number>();
     let hasRework = false;
@@ -92,7 +81,7 @@ export function buildProcessModel(events: ProcessEvent[]): ProcessModel {
       const previous = ordered[i - 1];
       const current = ordered[i];
       const waitSeconds = toSeconds(Date.parse(current.timestamp) - Date.parse(previous.timestamp));
-      const key = `${previous.activity}→${current.activity}`;
+      const key = JSON.stringify([previous.activity, current.activity]);
       const edge = edgeStats.get(key) ?? {
         source: previous.activity,
         target: current.activity,
@@ -114,7 +103,7 @@ export function buildProcessModel(events: ProcessEvent[]): ProcessModel {
     cycleTimes.push(cycle);
 
     const path = ordered.map((event) => event.activity);
-    const key = path.join("→");
+    const key = JSON.stringify(path);
     const variant = variantStats.get(key) ?? { path, caseCount: 0 };
     variant.caseCount += 1;
     variantStats.set(key, variant);
@@ -129,7 +118,10 @@ export function buildProcessModel(events: ProcessEvent[]): ProcessModel {
       avgIncomingWaitSeconds:
         stats.incomingWaitCount > 0 ? stats.incomingWaitTotal / stats.incomingWaitCount : 0,
     }))
-    .sort((a, b) => b.eventCount - a.eventCount);
+    .sort(
+      (a, b) =>
+        b.eventCount - a.eventCount || a.activity.localeCompare(b.activity, "pt-BR"),
+    );
 
   const edges: ProcessEdge[] = [...edgeStats.values()]
     .map((edge) => ({
@@ -138,10 +130,17 @@ export function buildProcessModel(events: ProcessEvent[]): ProcessModel {
       count: edge.count,
       avgWaitSeconds: edge.count ? edge.waitTotal / edge.count : 0,
     }))
-    .sort((a, b) => b.count - a.count);
+    .sort(
+      (a, b) =>
+        b.count - a.count ||
+        a.source.localeCompare(b.source, "pt-BR") ||
+        a.target.localeCompare(b.target, "pt-BR"),
+    );
 
   const variants: ProcessVariant[] = [...variantStats.values()].sort(
-    (a, b) => b.caseCount - a.caseCount,
+    (a, b) =>
+      b.caseCount - a.caseCount ||
+      a.path.join("→").localeCompare(b.path.join("→"), "pt-BR"),
   );
 
   const avgCycleSeconds =
@@ -154,11 +153,11 @@ export function buildProcessModel(events: ProcessEvent[]): ProcessModel {
     edges,
     variants,
     metrics: {
-      caseCount: cases.size,
+      caseCount: cases.length,
       eventCount: events.length,
       avgCycleSeconds,
       p95CycleSeconds: percentile(cycleTimes, 0.95),
-      reworkRatePct: cases.size ? (casesWithRework / cases.size) * 100 : 0,
+      reworkRatePct: cases.length ? (casesWithRework / cases.length) * 100 : 0,
     },
   };
 }

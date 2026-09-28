@@ -4,6 +4,7 @@ import type {
   SimulationResult,
   SimulationScenario,
 } from "./types";
+import { groupAndOrderEvents } from "./events";
 
 const percentile = (values: number[], p: number) => {
   if (!values.length) return 0;
@@ -26,24 +27,15 @@ function summarize(cycles: number[], slaThresholdSeconds: number): SimulationMet
 }
 
 export function simulateImprovement(
-  events: ProcessEvent[],
+  events: readonly ProcessEvent[],
   scenario: SimulationScenario,
 ): SimulationResult {
-  const grouped = new Map<string, ProcessEvent[]>();
-
-  for (const event of events) {
-    const list = grouped.get(event.caseId) ?? [];
-    list.push(event);
-    grouped.set(event.caseId, list);
-  }
+  const grouped = groupAndOrderEvents(events);
 
   const baselineCycles: number[] = [];
   const simulatedCycles: number[] = [];
 
-  for (const caseEvents of grouped.values()) {
-    const ordered = [...caseEvents].sort(
-      (a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp),
-    );
+  for (const [, ordered] of grouped) {
     if (ordered.length < 2) {
       baselineCycles.push(0);
       simulatedCycles.push(0);
@@ -73,8 +65,7 @@ export function simulateImprovement(
     simulatedCycles.push(simulated);
   }
 
-  const baselineSla =
-    scenario.slaThresholdSeconds ?? percentile(baselineCycles, 0.75) ?? 0;
+  const baselineSla = scenario.slaThresholdSeconds ?? percentile(baselineCycles, 0.75);
   const baseline = summarize(baselineCycles, baselineSla);
   const simulated = summarize(simulatedCycles, baselineSla);
 

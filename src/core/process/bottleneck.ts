@@ -40,5 +40,7 @@ export function findPrimaryBottleneck(model: ProcessModel): Bottleneck | null {
     } satisfies Bottleneck;
   });
 
-  return candidates.sort((a, b) => b.score - a.score)[0] ?? null;
+  return candidates.sort(
+    (a, b) => b.score - a.score || a.activity.localeCompare(b.activity, "pt-BR"),
+  )[0] ?? null;
 }
