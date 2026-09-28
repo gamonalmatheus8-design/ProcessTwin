@@ -1,0 +1,53 @@
+numero_pedido,etapa,data_hora,responsavel
+PED-001,Pedido recebido,2026-09-15 08:00,Portal
+PED-001,Análise,2026-09-15 08:20,Ana
+PED-001,Aprovação,2026-09-15 13:40,Carlos
+PED-001,Expedição,2026-09-15 14:10,Bruna
+PED-002,Pedido recebido,2026-09-15 08:15,Portal
+PED-002,Análise,2026-09-15 08:42,Ana
+PED-002,Aprovação,2026-09-15 14:20,Carlos
+PED-002,Expedição,2026-09-15 14:48,Bruna
+PED-003,Pedido recebido,2026-09-15 08:40,Portal
+PED-003,Análise,2026-09-15 09:05,Diego
+PED-003,Aprovação,2026-09-15 15:10,Carlos
+PED-003,Expedição,2026-09-15 15:35,Bruna
+PED-004,Pedido recebido,2026-09-16 08:05,Portal
+PED-004,Análise,2026-09-16 08:31,Ana
+PED-004,Aprovação,2026-09-16 14:04,Carlos
+PED-004,Expedição,2026-09-16 14:32,Bruna
+PED-005,Pedido recebido,2026-09-16 08:24,Portal
+PED-005,Análise,2026-09-16 08:51,Diego
+PED-005,Aprovação,2026-09-16 14:45,Carlos
+PED-005,Expedição,2026-09-16 15:19,Bruna
+PED-006,Pedido recebido,2026-09-16 09:00,Portal
+PED-006,Análise,2026-09-16 09:18,Ana
+PED-006,Correção cadastral,2026-09-16 09:42,Ana
+PED-006,Análise,2026-09-16 10:01,Ana
+PED-006,Aprovação,2026-09-16 15:51,Carlos
+PED-006,Expedição,2026-09-16 16:20,Bruna
+PED-007,Pedido recebido,2026-09-17 08:10,Portal
+PED-007,Análise,2026-09-17 08:39,Diego
+PED-007,Aprovação,2026-09-17 13:58,Carlos
+PED-007,Expedição,2026-09-17 14:27,Bruna
+PED-008,Pedido recebido,2026-09-17 08:33,Portal
+PED-008,Análise,2026-09-17 08:59,Ana
+PED-008,Aprovação,2026-09-17 14:41,Carlos
+PED-008,Expedição,2026-09-17 15:08,Bruna
+PED-009,Pedido recebido,2026-09-17 09:12,Portal
+PED-009,Análise,2026-09-17 09:36,Diego
+PED-009,Aprovação,2026-09-17 15:32,Carlos
+PED-009,Expedição,2026-09-17 16:04,Bruna
+PED-010,Pedido recebido,2026-09-18 08:02,Portal
+PED-010,Análise,2026-09-18 08:28,Ana
+PED-010,Aprovação,2026-09-18 13:49,Carlos
+PED-010,Expedição,2026-09-18 14:17,Bruna
+PED-011,Pedido recebido,2026-09-18 08:37,Portal
+PED-011,Análise,2026-09-18 09:03,Diego
+PED-011,Correção cadastral,2026-09-18 09:30,Diego
+PED-011,Análise,2026-09-18 09:51,Diego
+PED-011,Aprovação,2026-09-18 15:44,Carlos
+PED-011,Expedição,2026-09-18 16:11,Bruna
+PED-012,Pedido recebido,2026-09-18 09:05,Portal
+PED-012,Análise,2026-09-18 09:27,Ana
+PED-012,Aprovação,2026-09-18 14:56,Carlos
+PED-012,Expedição,2026-09-18 15:29,Bruna
