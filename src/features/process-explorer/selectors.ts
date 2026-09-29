@@ -87,7 +87,7 @@ export function buildExecutiveInsight(
 
   let sentence =
     `Principal gargalo: ${bottleneck.activity}. ` +
-    `A etapa apresenta espera média de ${formatDuration(bottleneck.avgWaitSeconds)} ` +
+    `A etapa apresenta intervalo médio observado de ${formatDuration(bottleneck.avgWaitSeconds)} ` +
     `e está presente em ${coverage.toFixed(0)}% dos cases analisados.`;
 
   if (rework) {
