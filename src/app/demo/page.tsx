@@ -1,4 +1,4 @@
-import { runCoreCycle } from "@/core/process/cycle";
+import Link from "next/link";\nimport { runCoreCycle } from "@/core/process/cycle";
 import { demoEvents, demoScenario } from "@/data/demo-process";
 
 const duration = (seconds: number) => {
@@ -23,6 +23,9 @@ export default function DemoPage() {
           Demonstração executada pelo engine real do ProcessTwin usando um event log de pedidos.
           Nenhum indicador abaixo foi digitado manualmente.
         </p>
+        <div className="actions">
+          <Link className="button" href="/demo/explorer">Abrir Process Explorer</Link>
+        </div>
       </section>
 
       <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(190px,1fr))", gap: 12, marginBottom: 18 }}>
