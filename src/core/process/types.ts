@@ -84,6 +84,7 @@ export type SimulationResult = {
   impactSummary: {
     secondsSavedPerCase: number;
     hoursSavedPer100Cases: number;
+    slaThresholdSeconds: number;
   };
 };
 
