@@ -1,4 +1,25 @@
 numero_pedido,etapa_pedido,data_status,vendedor
 P-501,Recebido,2026-09-01 08:00,Ana
-P-501,Aprovado,2026-09-01 09:00,Caio
-P-502,Recebido,2026-09-01 09:10,Ana
+P-501,Pagamento aprovado,2026-09-01 08:20,Caio
+P-501,Separação,2026-09-01 09:10,Bia
+P-501,Faturado,2026-09-01 09:40,Caio
+P-502,Recebido,2026-09-01 08:30,Ana
+P-502,Pagamento aprovado,2026-09-01 09:00,Caio
+P-502,Separação,2026-09-01 12:30,Bia
+P-502,Faturado,2026-09-01 13:00,Caio
+P-503,Recebido,2026-09-01 09:10,Davi
+P-503,Pagamento aprovado,2026-09-01 09:25,Caio
+P-503,Separação,2026-09-01 10:00,Bia
+P-503,Faturado,2026-09-01 10:20,Caio
+P-504,Recebido,2026-09-01 10:00,Davi
+P-504,Pagamento aprovado,2026-09-01 10:30,Caio
+P-504,Separação,2026-09-01 14:20,Bia
+P-504,Faturado,2026-09-01 14:50,Caio
+P-505,Recebido,2026-09-01 11:00,Ana
+P-505,Pagamento aprovado,2026-09-01 11:20,Caio
+P-505,Separação,2026-09-01 12:00,Eli
+P-505,Faturado,2026-09-01 12:25,Caio
+P-506,Recebido,2026-09-01 12:00,Davi
+P-506,Pagamento aprovado,2026-09-01 12:30,Caio
+P-506,Separação,2026-09-01 16:30,Eli
+P-506,Faturado,2026-09-01 17:00,Caio
