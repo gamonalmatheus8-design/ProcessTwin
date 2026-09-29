@@ -16,6 +16,13 @@ describe("process packs", () => {
     }
   });
 
+  it("cobre aliases importantes de múltiplos nichos", () => {
+    expect(getProcessPack("production")?.aliases.caseId).toEqual(expect.arrayContaining(["work_order", "production_order", "ordem_producao"]));
+    expect(getProcessPack("tickets")?.aliases.caseId).toEqual(expect.arrayContaining(["ticket_id", "incident_id", "chamado_id"]));
+    expect(getProcessPack("hiring")?.aliases.activity).toEqual(expect.arrayContaining(["hiring_stage", "fase", "etapa_selecao"]));
+    expect(getProcessPack("ecommerce")?.aliases.resource).toEqual(expect.arrayContaining(["warehouse", "carrier", "centro_distribuicao"]));
+  });
+
   it("não aceita um pack desconhecido", () => expect(getProcessPack("finance-secret")).toBeUndefined());
 
   it("mantém o pack genérico utilizável sem um nicho específico", () => {
