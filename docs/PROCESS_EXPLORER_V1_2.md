@@ -379,3 +379,8 @@ A pessoa deve conseguir olhar para o Explorer e dizer imediatamente:
 "Entendi como esse processo funciona e onde está travando."
 
 Esse é o objetivo da V1.2.
+
+
+## Preview deployment
+
+A V1.2 deve ser validada em Preview Deployment antes do merge para `main`.
