@@ -1,4 +1,5 @@
-import Link from "next/link";\nimport { runCoreCycle } from "@/core/process/cycle";
+import Link from "next/link";
+import { runCoreCycle } from "@/core/process/cycle";
 import { demoEvents, demoScenario } from "@/data/demo-process";
 
 const duration = (seconds: number) => {
