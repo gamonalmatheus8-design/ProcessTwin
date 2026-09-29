@@ -37,7 +37,18 @@ export async function getLatestProcessExplorerData(
     .limit(1)
     .maybeSingle();
 
-  if (analysisError || !analysis) {
+  if (analysisError) {
+    return {
+      kind: "error",
+      process: {
+        id: process.id,
+        name: process.name,
+        status: process.status,
+      },
+    };
+  }
+
+  if (!analysis) {
     return {
       kind: "no-analysis",
       process: {
@@ -71,7 +82,7 @@ export async function getLatestProcessExplorerData(
 
   if (modelError || datasetError || bottleneckError || !model || !dataset) {
     return {
-      kind: "no-analysis",
+      kind: "error",
       process: {
         id: process.id,
         name: process.name,
