@@ -1,4 +1,25 @@
 codigo_rastreio,checkpoint,data_ocorrencia,transportadora
 BR01,Coletado,2026-09-01 08:00,RotaSul
-BR01,Em trânsito,2026-09-01 13:00,RotaSul
-BR02,Coletado,2026-09-01 09:00,RotaNorte
+BR01,Centro de distribuição,2026-09-01 10:00,RotaSul
+BR01,Em rota,2026-09-01 13:00,RotaSul
+BR01,Entregue,2026-09-01 15:00,RotaSul
+BR02,Coletado,2026-09-01 08:30,RotaNorte
+BR02,Centro de distribuição,2026-09-01 11:00,RotaNorte
+BR02,Em rota,2026-09-01 17:30,RotaNorte
+BR02,Entregue,2026-09-01 19:00,RotaNorte
+BR03,Coletado,2026-09-01 09:00,RotaSul
+BR03,Centro de distribuição,2026-09-01 10:30,RotaSul
+BR03,Em rota,2026-09-01 12:00,RotaSul
+BR03,Entregue,2026-09-01 14:10,RotaSul
+BR04,Coletado,2026-09-01 10:00,RotaLeste
+BR04,Centro de distribuição,2026-09-01 12:00,RotaLeste
+BR04,Em rota,2026-09-01 18:10,RotaLeste
+BR04,Entregue,2026-09-01 20:00,RotaLeste
+BR05,Coletado,2026-09-01 11:00,RotaNorte
+BR05,Centro de distribuição,2026-09-01 12:30,RotaNorte
+BR05,Em rota,2026-09-01 14:00,RotaNorte
+BR05,Entregue,2026-09-01 16:00,RotaNorte
+BR06,Coletado,2026-09-01 12:00,RotaLeste
+BR06,Centro de distribuição,2026-09-01 13:30,RotaLeste
+BR06,Em rota,2026-09-01 19:20,RotaLeste
+BR06,Entregue,2026-09-01 21:00,RotaLeste
