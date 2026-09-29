@@ -1,4 +1,25 @@
 protocolo,status_ticket,data_atualizacao,agente
 T-10,Aberto,2026-09-01 08:00,Bia
-T-10,Em análise,2026-09-01 08:20,Davi
-T-11,Aberto,2026-09-01 09:00,Bia
+T-10,Triagem,2026-09-01 08:20,Davi
+T-10,Em análise,2026-09-01 09:00,Davi
+T-10,Resolvido,2026-09-01 10:00,Bia
+T-11,Aberto,2026-09-01 08:30,Bia
+T-11,Triagem,2026-09-01 08:50,Davi
+T-11,Em análise,2026-09-01 13:30,Eli
+T-11,Resolvido,2026-09-01 14:20,Eli
+T-12,Aberto,2026-09-01 09:00,Caio
+T-12,Triagem,2026-09-01 09:20,Davi
+T-12,Em análise,2026-09-01 10:00,Caio
+T-12,Resolvido,2026-09-01 11:00,Caio
+T-13,Aberto,2026-09-01 10:00,Bia
+T-13,Triagem,2026-09-01 10:20,Davi
+T-13,Em análise,2026-09-01 15:40,Eli
+T-13,Resolvido,2026-09-01 16:30,Eli
+T-14,Aberto,2026-09-01 11:00,Caio
+T-14,Triagem,2026-09-01 11:25,Davi
+T-14,Em análise,2026-09-01 12:10,Caio
+T-14,Resolvido,2026-09-01 13:10,Caio
+T-15,Aberto,2026-09-01 12:00,Bia
+T-15,Triagem,2026-09-01 12:20,Davi
+T-15,Em análise,2026-09-01 17:20,Eli
+T-15,Resolvido,2026-09-01 18:10,Eli
