@@ -140,11 +140,178 @@ export type Database = {
           },
         ]
       }
+      connector_mappings: {
+        Row: {
+          active: boolean
+          canonical_mapping: Json
+          connector_id: string
+          created_at: string
+          created_by: string
+          id: string
+          identity_config: Json
+          organization_id: string
+          source_schema_hash: string
+          version: number
+        }
+        Insert: {
+          active?: boolean
+          canonical_mapping?: Json
+          connector_id: string
+          created_at?: string
+          created_by: string
+          id?: string
+          identity_config?: Json
+          organization_id: string
+          source_schema_hash: string
+          version: number
+        }
+        Update: {
+          active?: boolean
+          canonical_mapping?: Json
+          connector_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          identity_config?: Json
+          organization_id?: string
+          source_schema_hash?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connector_mappings_connector_scope_fkey"
+            columns: ["connector_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "connectors"
+            referencedColumns: ["id", "organization_id"]
+          },
+        ]
+      }
+      connector_sync_state: {
+        Row: {
+          checkpoint: Json
+          connector_id: string
+          consecutive_failures: number
+          last_attempt_at: string | null
+          last_success_at: string | null
+          lease_owner: string | null
+          lease_until: string | null
+          next_sync_at: string | null
+          organization_id: string
+          updated_at: string
+          watermark: string | null
+        }
+        Insert: {
+          checkpoint?: Json
+          connector_id: string
+          consecutive_failures?: number
+          last_attempt_at?: string | null
+          last_success_at?: string | null
+          lease_owner?: string | null
+          lease_until?: string | null
+          next_sync_at?: string | null
+          organization_id: string
+          updated_at?: string
+          watermark?: string | null
+        }
+        Update: {
+          checkpoint?: Json
+          connector_id?: string
+          consecutive_failures?: number
+          last_attempt_at?: string | null
+          last_success_at?: string | null
+          lease_owner?: string | null
+          lease_until?: string | null
+          next_sync_at?: string | null
+          organization_id?: string
+          updated_at?: string
+          watermark?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connector_sync_state_connector_scope_fkey"
+            columns: ["connector_id", "organization_id"]
+            isOneToOne: true
+            referencedRelation: "connectors"
+            referencedColumns: ["id", "organization_id"]
+          },
+        ]
+      }
+      connectors: {
+        Row: {
+          configuration: Json
+          created_at: string
+          created_by: string
+          credential_ref: string | null
+          dataset_id: string | null
+          id: string
+          name: string
+          organization_id: string
+          process_id: string
+          process_pack_id: string | null
+          schedule_minutes: number | null
+          status: string
+          sync_mode: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          configuration?: Json
+          created_at?: string
+          created_by: string
+          credential_ref?: string | null
+          dataset_id?: string | null
+          id?: string
+          name: string
+          organization_id: string
+          process_id: string
+          process_pack_id?: string | null
+          schedule_minutes?: number | null
+          status?: string
+          sync_mode?: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          configuration?: Json
+          created_at?: string
+          created_by?: string
+          credential_ref?: string | null
+          dataset_id?: string | null
+          id?: string
+          name?: string
+          organization_id?: string
+          process_id?: string
+          process_pack_id?: string | null
+          schedule_minutes?: number | null
+          status?: string
+          sync_mode?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connectors_dataset_scope_fkey"
+            columns: ["dataset_id", "process_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "datasets"
+            referencedColumns: ["id", "process_id", "organization_id"]
+          },
+          {
+            foreignKeyName: "connectors_process_scope_fkey"
+            columns: ["process_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "processes"
+            referencedColumns: ["id", "organization_id"]
+          },
+        ]
+      }
       datasets: {
         Row: {
           case_count: number
           column_mapping: Json
           created_at: string
+          dataset_mode: string
           id: string
           name: string
           organization_id: string
@@ -161,6 +328,7 @@ export type Database = {
           case_count?: number
           column_mapping?: Json
           created_at?: string
+          dataset_mode?: string
           id?: string
           name: string
           organization_id: string
@@ -177,6 +345,7 @@ export type Database = {
           case_count?: number
           column_mapping?: Json
           created_at?: string
+          dataset_mode?: string
           id?: string
           name?: string
           organization_id?: string
@@ -323,52 +492,87 @@ export type Database = {
         Row: {
           activity: string
           case_id: string
+          connector_id: string | null
           cost: number | null
           created_at: string
           dataset_id: string
           event_index: number
           event_time: string
           id: number
+          ingested_at: string
           lifecycle: string | null
           metadata: Json
           organization_id: string
           process_id: string
           resource: string | null
+          source_event_key: string | null
+          source_payload_hash: string | null
+          source_updated_at: string | null
           status: string | null
+          sync_run_id: string | null
         }
         Insert: {
           activity: string
           case_id: string
+          connector_id?: string | null
           cost?: number | null
           created_at?: string
           dataset_id: string
           event_index: number
           event_time: string
           id?: never
+          ingested_at?: string
           lifecycle?: string | null
           metadata?: Json
           organization_id: string
           process_id: string
           resource?: string | null
+          source_event_key?: string | null
+          source_payload_hash?: string | null
+          source_updated_at?: string | null
           status?: string | null
+          sync_run_id?: string | null
         }
         Update: {
           activity?: string
           case_id?: string
+          connector_id?: string | null
           cost?: number | null
           created_at?: string
           dataset_id?: string
           event_index?: number
           event_time?: string
           id?: never
+          ingested_at?: string
           lifecycle?: string | null
           metadata?: Json
           organization_id?: string
           process_id?: string
           resource?: string | null
+          source_event_key?: string | null
+          source_payload_hash?: string | null
+          source_updated_at?: string | null
           status?: string | null
+          sync_run_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "process_events_connector_scope_fkey"
+            columns: [
+              "connector_id",
+              "process_id",
+              "dataset_id",
+              "organization_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "connectors"
+            referencedColumns: [
+              "id",
+              "process_id",
+              "dataset_id",
+              "organization_id",
+            ]
+          },
           {
             foreignKeyName: "process_events_dataset_id_organization_id_fkey"
             columns: ["dataset_id", "organization_id"]
@@ -382,6 +586,25 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "processes"
             referencedColumns: ["id", "organization_id"]
+          },
+          {
+            foreignKeyName: "process_events_sync_run_scope_fkey"
+            columns: [
+              "sync_run_id",
+              "connector_id",
+              "process_id",
+              "dataset_id",
+              "organization_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "sync_runs"
+            referencedColumns: [
+              "id",
+              "connector_id",
+              "process_id",
+              "dataset_id",
+              "organization_id",
+            ]
           },
         ]
       }
@@ -649,6 +872,93 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "processes"
             referencedColumns: ["id", "organization_id"]
+          },
+        ]
+      }
+      sync_runs: {
+        Row: {
+          accepted_count: number
+          checkpoint_after: Json
+          checkpoint_before: Json
+          completed_at: string | null
+          connector_id: string
+          created_at: string
+          dataset_id: string
+          duplicate_count: number
+          error_code: string | null
+          error_message: string | null
+          fetched_count: number
+          id: string
+          invalid_count: number
+          organization_id: string
+          page_count: number
+          process_id: string
+          started_at: string | null
+          status: string
+          trigger: string
+          updated_count: number
+        }
+        Insert: {
+          accepted_count?: number
+          checkpoint_after?: Json
+          checkpoint_before?: Json
+          completed_at?: string | null
+          connector_id: string
+          created_at?: string
+          dataset_id: string
+          duplicate_count?: number
+          error_code?: string | null
+          error_message?: string | null
+          fetched_count?: number
+          id?: string
+          invalid_count?: number
+          organization_id: string
+          page_count?: number
+          process_id: string
+          started_at?: string | null
+          status?: string
+          trigger: string
+          updated_count?: number
+        }
+        Update: {
+          accepted_count?: number
+          checkpoint_after?: Json
+          checkpoint_before?: Json
+          completed_at?: string | null
+          connector_id?: string
+          created_at?: string
+          dataset_id?: string
+          duplicate_count?: number
+          error_code?: string | null
+          error_message?: string | null
+          fetched_count?: number
+          id?: string
+          invalid_count?: number
+          organization_id?: string
+          page_count?: number
+          process_id?: string
+          started_at?: string | null
+          status?: string
+          trigger?: string
+          updated_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sync_runs_connector_scope_fkey"
+            columns: [
+              "connector_id",
+              "process_id",
+              "dataset_id",
+              "organization_id",
+            ]
+            isOneToOne: false
+            referencedRelation: "connectors"
+            referencedColumns: [
+              "id",
+              "process_id",
+              "dataset_id",
+              "organization_id",
+            ]
           },
         ]
       }
