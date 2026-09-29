@@ -52,6 +52,18 @@ describe("Auto Mapping V2", () => {
     expect(result.suggestions.timestamp.confidence).toBeLessThan(0.5);
   });
 
+  it("prioriza campos obrigatórios quando uma coluna compete com recurso", () => {
+    const parsed = parseCsv("case_id,status,timestamp,agent_status\nA,Novo,2026-01-01 08:00,Equipe 1\nA,Pago,2026-01-01 09:00,Equipe 1");
+    const result = suggestColumnMappingV2({
+      headers: parsed.headers,
+      profiles: profileColumns(parsed),
+      processPack: getProcessPack("generic")!,
+    });
+    expect(result.mapping.caseId).toBe("case_id");
+    expect(result.mapping.activity).toBe("status");
+    expect(result.mapping.timestamp).toBe("timestamp");
+  });
+
   it("é determinístico e não depende de serviço externo", () => {
     const parsed = parseCsv("pedido,etapa,data_hora\n1,Novo,2026-01-01");
     const input = { headers: parsed.headers, profiles: profileColumns(parsed), processPack: PROCESS_PACKS[1]! };
