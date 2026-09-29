@@ -1,0 +1,4 @@
+order_id,order_status,event_at,warehouse
+O-50,Created,2026-09-01 08:00,WH-01
+O-50,Paid,2026-09-01 08:05,WH-01
+O-51,Created,2026-09-01 09:00,WH-02

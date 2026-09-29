@@ -1,0 +1,4 @@
+ordem_producao,operacao,data_operacao,maquina
+OP-101,Corte,2026-09-01 08:00,CNC-02
+OP-101,Inspeção,2026-09-01 09:20,Qualidade
+OP-102,Corte,2026-09-01 09:30,CNC-02

@@ -1,0 +1,4 @@
+numero_pedido,etapa_pedido,data_status,vendedor
+P-501,Recebido,2026-09-01 08:00,Ana
+P-501,Aprovado,2026-09-01 09:00,Caio
+P-502,Recebido,2026-09-01 09:10,Ana
