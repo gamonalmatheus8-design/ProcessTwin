@@ -3,6 +3,7 @@ import type { ProcessPack } from "./process-packs";
 import type { AutoMappingResult, CanonicalField, ColumnProfile, MappingConflict, MappingSuggestion } from "./types";
 
 const FIELDS: CanonicalField[] = ["caseId", "activity", "timestamp", "resource"];
+const REQUIRED_FIELDS = new Set<CanonicalField>(["caseId", "activity", "timestamp"]);
 const LABELS: Record<CanonicalField, string> = { caseId: "Case ID", activity: "Atividade", timestamp: "Timestamp", resource: "Recurso" };
 type Candidate = { field: CanonicalField; column: string; score: number; reasons: string[] };
 
@@ -72,7 +73,8 @@ function resolveGlobally(candidates: Candidate[]) {
     for (const candidate of byField.get(field) ?? []) {
       if (used.has(candidate.column) || candidate.score < 1) continue;
       used.add(candidate.column); selected[field] = candidate;
-      visit(index + 1, used, total + candidate.score, selected);
+      const requiredBonus = REQUIRED_FIELDS.has(field) && candidate.score >= 50 ? 120 : 0;
+      visit(index + 1, used, total + candidate.score + requiredBonus, selected);
       used.delete(candidate.column); delete selected[field];
     }
   };
