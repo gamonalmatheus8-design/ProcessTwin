@@ -1,0 +1,25 @@
+solicitacao_id,decisao,data_decisao,aprovador
+S-40,Enviada,2026-09-01 08:00,Ivo
+S-40,Conferência,2026-09-01 08:30,Ivo
+S-40,Análise,2026-09-01 09:00,Mia
+S-40,Aprovada,2026-09-01 11:00,Mia
+S-41,Enviada,2026-09-01 08:30,Ivo
+S-41,Conferência,2026-09-01 09:00,Ivo
+S-41,Análise,2026-09-01 14:00,Mia
+S-41,Aprovada,2026-09-01 15:00,Mia
+S-42,Enviada,2026-09-01 09:00,Lia
+S-42,Conferência,2026-09-01 09:30,Lia
+S-42,Análise,2026-09-01 10:00,Mia
+S-42,Aprovada,2026-09-01 11:30,Mia
+S-43,Enviada,2026-09-01 10:00,Ivo
+S-43,Conferência,2026-09-01 10:30,Ivo
+S-43,Análise,2026-09-01 15:50,Mia
+S-43,Aprovada,2026-09-01 16:40,Mia
+S-44,Enviada,2026-09-01 11:00,Lia
+S-44,Conferência,2026-09-01 11:30,Lia
+S-44,Análise,2026-09-01 12:00,Mia
+S-44,Aprovada,2026-09-01 13:30,Mia
+S-45,Enviada,2026-09-01 12:00,Ivo
+S-45,Conferência,2026-09-01 12:30,Ivo
+S-45,Análise,2026-09-01 17:40,Mia
+S-45,Aprovada,2026-09-01 18:30,Mia

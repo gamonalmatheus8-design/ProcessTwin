@@ -1,0 +1,25 @@
+order_id,order_status,event_at,warehouse
+O-50,Created,2026-09-01 08:00,WH-01
+O-50,Paid,2026-09-01 08:05,WH-01
+O-50,Packed,2026-09-01 09:00,WH-01
+O-50,Delivered,2026-09-01 14:00,Carrier-A
+O-51,Created,2026-09-01 08:30,WH-02
+O-51,Paid,2026-09-01 08:40,WH-02
+O-51,Packed,2026-09-01 13:20,WH-02
+O-51,Delivered,2026-09-01 18:00,Carrier-B
+O-52,Created,2026-09-01 09:00,WH-01
+O-52,Paid,2026-09-01 09:10,WH-01
+O-52,Packed,2026-09-01 10:00,WH-01
+O-52,Delivered,2026-09-01 15:00,Carrier-A
+O-53,Created,2026-09-01 10:00,WH-02
+O-53,Paid,2026-09-01 10:10,WH-02
+O-53,Packed,2026-09-01 15:30,WH-02
+O-53,Delivered,2026-09-01 20:00,Carrier-B
+O-54,Created,2026-09-01 11:00,WH-01
+O-54,Paid,2026-09-01 11:10,WH-01
+O-54,Packed,2026-09-01 12:00,WH-01
+O-54,Delivered,2026-09-01 16:30,Carrier-A
+O-55,Created,2026-09-01 12:00,WH-02
+O-55,Paid,2026-09-01 12:10,WH-02
+O-55,Packed,2026-09-01 17:30,WH-02
+O-55,Delivered,2026-09-01 21:00,Carrier-B

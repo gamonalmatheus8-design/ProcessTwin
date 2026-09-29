@@ -1,0 +1,25 @@
+candidatura_id,etapa_selecao,data_movimentacao,recrutador
+C-30,Candidatura,2026-09-01 08:00,Rui
+C-30,Triagem,2026-09-01 10:00,Rui
+C-30,Entrevista,2026-09-02 10:00,Sara
+C-30,Oferta,2026-09-02 16:00,Sara
+C-31,Candidatura,2026-09-01 08:30,Rui
+C-31,Triagem,2026-09-01 10:30,Rui
+C-31,Entrevista,2026-09-04 10:00,Sara
+C-31,Oferta,2026-09-04 16:00,Sara
+C-32,Candidatura,2026-09-01 09:00,Nina
+C-32,Triagem,2026-09-01 11:00,Nina
+C-32,Entrevista,2026-09-02 11:00,Sara
+C-32,Oferta,2026-09-02 17:00,Sara
+C-33,Candidatura,2026-09-01 10:00,Rui
+C-33,Triagem,2026-09-01 12:00,Rui
+C-33,Entrevista,2026-09-05 09:00,Sara
+C-33,Oferta,2026-09-05 15:00,Sara
+C-34,Candidatura,2026-09-01 11:00,Nina
+C-34,Triagem,2026-09-01 13:00,Nina
+C-34,Entrevista,2026-09-02 13:00,Sara
+C-34,Oferta,2026-09-02 17:30,Sara
+C-35,Candidatura,2026-09-01 12:00,Rui
+C-35,Triagem,2026-09-01 14:00,Rui
+C-35,Entrevista,2026-09-05 11:00,Sara
+C-35,Oferta,2026-09-05 16:30,Sara

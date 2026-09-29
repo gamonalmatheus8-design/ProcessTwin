@@ -1,6 +1,6 @@
 import type { CanonicalField, ColumnMapping } from "./types";
 
-const aliases: Record<CanonicalField, string[]> = {
+export const UNIVERSAL_COLUMN_ALIASES: Record<CanonicalField, string[]> = {
   caseId: ["case_id", "caseid", "case", "id", "pedido", "pedido_id", "numero_pedido", "processo", "process_id", "ticket", "ticket_id"],
   activity: ["activity", "atividade", "etapa", "stage", "status", "acao", "evento", "event"],
   timestamp: ["timestamp", "datetime", "data_hora", "datahora", "date", "data", "horario", "created_at", "event_time"],
@@ -20,8 +20,8 @@ export const normalizeHeader = (header: string) =>
 export function suggestColumnMapping(headers: readonly string[]): ColumnMapping {
   const normalized = new Map(headers.map((header) => [normalizeHeader(header), header]));
   const mapping: ColumnMapping = {};
-  for (const field of Object.keys(aliases) as CanonicalField[]) {
-    const match = aliases[field].map(normalizeHeader).find((alias) => normalized.has(alias));
+  for (const field of Object.keys(UNIVERSAL_COLUMN_ALIASES) as CanonicalField[]) {
+    const match = UNIVERSAL_COLUMN_ALIASES[field].map(normalizeHeader).find((alias) => normalized.has(alias));
     if (match) mapping[field] = normalized.get(match);
   }
   return mapping;

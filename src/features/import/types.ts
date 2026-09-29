@@ -3,6 +3,40 @@ import type { CoreCycleResult, ProcessEvent } from "@/core/process/types";
 export type CanonicalField = "caseId" | "activity" | "timestamp" | "resource";
 export type ColumnMapping = Partial<Record<CanonicalField, string>>;
 
+export type ColumnProfile = {
+  column: string;
+  sampledRows: number;
+  filledCount: number;
+  emptyCount: number;
+  uniqueCount: number;
+  uniquenessRatio: number;
+  repetitionRatio: number;
+  timestampParseRatio: number;
+  numericRatio: number;
+  sampleValues: string[];
+};
+
+export type MappingAlternative = { column: string; score: number; confidence: number };
+export type MappingSuggestion = {
+  field: CanonicalField;
+  column?: string;
+  score: number;
+  confidence: number;
+  reasons: string[];
+  alternatives: MappingAlternative[];
+};
+export type MappingConflict = {
+  type: "column" | "field";
+  message: string;
+  columns: string[];
+  fields: CanonicalField[];
+};
+export type AutoMappingResult = {
+  mapping: ColumnMapping;
+  suggestions: Record<CanonicalField, MappingSuggestion>;
+  conflicts: MappingConflict[];
+};
+
 export type CsvRow = { rowNumber: number; values: Record<string, string> };
 export type ParsedCsv = {
   headers: string[];
