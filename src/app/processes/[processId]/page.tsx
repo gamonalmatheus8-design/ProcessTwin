@@ -80,7 +80,7 @@ export default async function ProcessOverviewPage({
         <h2>{bottleneck?.activity ?? "Nenhum gargalo identificado"}</h2>
         {bottleneck ? (
           <p>
-            Score <strong>{bottleneck.score}/100</strong> · espera média{" "}
+            Score <strong>{bottleneck.score}/100</strong> · intervalo médio observado{" "}
             <strong>{formatDuration(bottleneck.avgWaitSeconds)}</strong> ·{" "}
             {bottleneck.affectedCases} cases afetados.
           </p>

@@ -61,6 +61,7 @@ describe("Process Explorer selectors", () => {
   it("builds deterministic executive insight from calculated data", () => {
     const text = buildExecutiveInsight(nodes, bottleneck, 10);
     expect(text).toContain("Principal gargalo: Aprovação");
+    expect(text).toContain("intervalo médio observado");
     expect(text).toContain("100% dos cases");
     expect(text).toContain("retrabalho");
     expect(text).toContain("Análise");

@@ -95,6 +95,7 @@ export function simulateImprovement(
     impactSummary: {
       secondsSavedPerCase: Math.round(secondsSavedPerCase),
       hoursSavedPer100Cases: Number(((secondsSavedPerCase * 100) / 3600).toFixed(2)),
+      slaThresholdSeconds: baselineSla,
     },
   };
 }

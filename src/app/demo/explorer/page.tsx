@@ -28,7 +28,7 @@ export default function DemoExplorerPage() {
 
   return (
     <main className="explorer-page">
-      <ProcessExplorer data={data} />
+      <ProcessExplorer data={data} simulationHrefBase="/demo/simulation" />
     </main>
   );
 }

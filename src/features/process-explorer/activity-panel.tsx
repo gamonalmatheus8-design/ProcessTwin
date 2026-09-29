@@ -1,4 +1,5 @@
 import type { Bottleneck, ProcessNode } from "@/core/process/types";
+import Link from "next/link";
 import { formatDuration, formatPct } from "./formatters";
 import {
   getActivityCoveragePct,
@@ -9,11 +10,13 @@ export function ActivityPanel({
   node,
   bottleneck,
   totalCases,
+  simulationHrefBase,
   onClose,
 }: {
   node: ProcessNode | null;
   bottleneck: Bottleneck | null;
   totalCases: number;
+  simulationHrefBase: string;
   onClose: () => void;
 }) {
   if (!node) {
@@ -48,7 +51,7 @@ export function ActivityPanel({
       <dl className="activity-stats">
         <div><dt>Cases</dt><dd>{node.caseCount}</dd></div>
         <div><dt>Eventos</dt><dd>{node.eventCount}</dd></div>
-        <div><dt>Espera média</dt><dd>{formatDuration(node.avgIncomingWaitSeconds)}</dd></div>
+        <div><dt>Intervalo médio observado</dt><dd>{formatDuration(node.avgIncomingWaitSeconds)}</dd></div>
         <div><dt>Retrabalho</dt><dd>{formatPct(getActivityReworkPct(node))}</dd></div>
         <div><dt>Cobertura</dt><dd>{formatPct(getActivityCoveragePct(node, totalCases))}</dd></div>
       </dl>
@@ -58,13 +61,20 @@ export function ActivityPanel({
           <span>Gargalo principal</span>
           <strong>{bottleneck.severity.toUpperCase()} · {bottleneck.score}/100</strong>
           <p>
-            O score oficial combina espera, volume e retrabalho calculados pelo
+            O score oficial combina intervalo observado, volume e retrabalho calculados pelo
             Bottleneck Engine.
           </p>
         </div>
       ) : (
         <div className="neutral-box">Esta atividade não é o gargalo principal da análise.</div>
       )}
+
+      <Link
+        className={`button simulation-cta${isBottleneck ? " primary" : " secondary"}`}
+        href={`${simulationHrefBase}?activity=${encodeURIComponent(node.activity)}`}
+      >
+        Simular melhoria
+      </Link>
     </aside>
   );
 }
