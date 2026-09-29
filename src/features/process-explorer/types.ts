@@ -35,6 +35,7 @@ export type ProcessExplorerData = {
 export type ProcessExplorerLoadResult =
   | { kind: "ok"; data: ProcessExplorerData }
   | { kind: "no-analysis"; process: ProcessExplorerData["process"] }
+  | { kind: "error"; process: ProcessExplorerData["process"] }
   | { kind: "not-found" };
 
 export type ActivityHealth = "healthy" | "attention" | "high" | "critical";
