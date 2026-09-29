@@ -10,13 +10,6 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ processId: string }> },
 ) {
-  let payload: unknown;
-  try {
-    payload = await request.json();
-  } catch {
-    return NextResponse.json({ error: "O corpo da requisição deve ser JSON válido." }, { status: 400 });
-  }
-
   const supabase = await createClient();
   const {
     data: { user },
@@ -24,6 +17,16 @@ export async function POST(
   } = await supabase.auth.getUser();
   if (authError || !user) {
     return NextResponse.json({ error: "Autenticação necessária." }, { status: 401 });
+  }
+
+  let payload: unknown;
+  try {
+    payload = await request.json();
+  } catch {
+    return NextResponse.json(
+      { error: "O corpo da requisição deve ser JSON válido." },
+      { status: 400 },
+    );
   }
 
   try {
