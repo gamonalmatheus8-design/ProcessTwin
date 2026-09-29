@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { runCoreCycle } from "@/core/process/cycle";
+import { suggestColumnMappingV2 } from "@/features/import/auto-mapping";
 import { parseCsv } from "@/features/import/parser";
+import { getProcessPack } from "@/features/import/process-packs";
+import { profileColumns } from "@/features/import/profiling";
 import type { ColumnMapping } from "@/features/import/types";
 import { validateAndNormalizeCsv } from "@/features/import/validation";
 import type { Json } from "@/lib/supabase/database.types";
@@ -35,6 +38,9 @@ export async function POST(request: Request) {
   const processId = String(form.get("processId") ?? "");
   const organizationId = String(form.get("organizationId") ?? "");
   const processName = String(form.get("processName") ?? "").trim();
+  const processPackId = String(form.get("processPackId") ?? "generic");
+  const processPack = getProcessPack(processPackId);
+  if (!processPack) return responseError("Contexto de processo inválido.", 400);
   if (!UUID.test(organizationId)) return responseError("Organização inválida.", 400);
   if (processId && !UUID.test(processId)) return responseError("Processo inválido.", 400);
   if (!processId && (processName.length < 2 || processName.length > 160)) return responseError("Informe um nome de processo entre 2 e 160 caracteres.", 400);
@@ -44,6 +50,7 @@ export async function POST(request: Request) {
   if (authError || !user) return responseError("Autenticação necessária.", 401);
 
   const parsed = parseCsv(await file.text());
+  const serverMappingReview = suggestColumnMappingV2({ headers: parsed.headers, profiles: profileColumns(parsed), processPack });
   const validation = validateAndNormalizeCsv(parsed, mapping);
   if (!validation.events.length) return responseError("O CSV não contém nenhum evento válido.", 422, { validation });
 
@@ -149,6 +156,7 @@ export async function POST(request: Request) {
     dataset: { id: datasetId, name: datasetName, storagePath },
     process: selectedProcess,
     validation: validation.summary,
+    mappingReview: { processPackId: processPack.id, conflicts: serverMappingReview.conflicts },
     analysis,
   }, { status: 201 });
 }

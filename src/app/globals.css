@@ -64,6 +64,7 @@ p { color: var(--muted); line-height: 1.7; }
 .panel { width: 100%; padding: 28px; border: 1px solid var(--border); border-radius: 20px; background: color-mix(in srgb, var(--surface) 94%, transparent); }
 .panel h2 { margin: 8px 0 10px; font-size: clamp(24px, 4vw, 34px); }
 .steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.steps.steps-six { grid-template-columns: repeat(6, 1fr); }
 .steps li { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
 .steps li span { display: grid; place-items: center; width: 28px; height: 28px; border: 1px solid var(--border); border-radius: 50%; }
 .steps li.active { color: var(--text); }
@@ -72,6 +73,22 @@ p { color: var(--muted); line-height: 1.7; }
 .result-grid { grid-template-columns: repeat(3, 1fr); margin: 0; }
 .choice { padding: 18px; text-align: left; color: var(--text); border: 1px solid var(--border); border-radius: 14px; background: transparent; cursor: pointer; }
 .choice.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+.pack-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 22px 0; }
+.pack-card { display: grid; gap: 8px; min-height: 142px; padding: 18px; text-align: left; color: var(--text); border: 1px solid var(--border); border-radius: 14px; background: rgba(7,11,20,.34); cursor: pointer; }
+.pack-card:hover, .pack-card.selected { border-color: var(--accent); background: rgba(36,83,98,.22); box-shadow: 0 0 0 1px rgba(110,231,255,.16) inset; }
+.pack-card strong { font-size: 17px; }
+.pack-card span { color: var(--muted); font-size: 12px; line-height: 1.45; }
+.pack-card small { align-self: end; color: var(--accent); }
+.mapping-card { display: grid; gap: 12px; padding: 16px; border: 1px solid var(--border); border-radius: 14px; background: rgba(7,11,20,.32); }
+.mapping-confidence { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 11px; }
+.confidence { width: fit-content; padding: 5px 8px; border: 1px solid var(--border); border-radius: 999px; }
+.confidence-alta { color: #9cf0d2; border-color: #24705a; }
+.confidence-boa { color: #bceffc; border-color: #275768; }
+.confidence-revisar { color: #f0d990; border-color: #856c2c; }
+.confidence-manual { color: #ffb3ba; border-color: #7f3440; }
+.mapping-card details { color: var(--muted); font-size: 12px; line-height: 1.5; }
+.mapping-card summary { color: var(--accent); cursor: pointer; }
+.mapping-card ul { margin: 8px 0; padding-left: 18px; }
 label { display: grid; gap: 8px; color: var(--text); font-size: 14px; }
 label em { color: var(--accent); font-size: 11px; font-style: normal; text-transform: uppercase; }
 input, select, textarea { width: 100%; padding: 13px 14px; color: var(--text); border: 1px solid var(--border); border-radius: 10px; background: #080e19; }
@@ -107,8 +124,10 @@ th { color: var(--muted); }
   .page-header { display: block; }
   .text-link { display: inline-block; padding: 0; }
   .steps { grid-template-columns: repeat(5, 1fr); }
+  .steps.steps-six { grid-template-columns: repeat(3, 1fr); row-gap: 14px; }
   .steps li { display: grid; justify-items: center; font-size: 10px; }
   .two-columns, .mapping-grid, .result-grid { grid-template-columns: 1fr; }
+  .pack-grid { grid-template-columns: 1fr; }
   .summary-grid, .metric-grid { grid-template-columns: repeat(2, 1fr); }
   .panel { padding: 20px; }
 }
