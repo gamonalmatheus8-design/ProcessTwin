@@ -13,6 +13,21 @@ export default async function ProcessExplorerPage({
 
   if (result.kind === "not-found") notFound();
 
+  if (result.kind === "error") {
+    return (
+      <main className="app-shell">
+        <section className="panel empty-state">
+          <span className="eyebrow">ProcessTwin AI</span>
+          <h1>Não foi possível carregar o Explorer</h1>
+          <p>O processo existe, mas a análise mais recente não pôde ser carregada agora.</p>
+          <div className="actions">
+            <Link className="button secondary" href="/processes/new">Voltar para importação</Link>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   if (result.kind === "no-analysis") {
     return (
       <main className="app-shell">
