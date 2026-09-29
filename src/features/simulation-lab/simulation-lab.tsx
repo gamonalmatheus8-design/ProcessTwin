@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import type { SimulationResult } from "@/core/process/types";
+import { formatDateTime } from "@/features/process-explorer/formatters";
 import {
   AGGRESSIVE_NOTICE,
   MODEL_NOTICE,
@@ -208,7 +209,7 @@ export function SimulationLab({
           <span className="eyebrow">Simulation Lab · V1.3</span>
           <h1>{data.process.name}</h1>
           <p>
-            Dataset {data.dataset.originalFilename ?? data.dataset.name} · análise base {new Date(data.analysis.completedAt ?? data.analysis.createdAt).toLocaleString("pt-BR")}
+            Dataset {data.dataset.originalFilename ?? data.dataset.name} · análise base {formatDateTime(data.analysis.completedAt ?? data.analysis.createdAt)}
           </p>
         </div>
         {demo && <span className="demo-badge">Demo pública · sem persistência</span>}
@@ -286,7 +287,7 @@ export function SimulationLab({
           <div className="simulation-section-heading"><div><span className="eyebrow">Baseline atual</span><h2>Histórico de cenários</h2></div><span>{history.length} de 10</span></div>
           {history.length ? (
             <div className="table-wrap"><table><thead><tr><th>Nome</th><th>Data</th><th>Atividade</th><th>Redução</th><th>Capacidade</th><th>Ciclo simulado</th><th>Throughput</th><th>Ações</th></tr></thead><tbody>
-              {history.map((item) => <tr className={selectedScenarioId === item.scenarioId ? "selected-row" : ""} key={item.scenarioId}><td><button className="history-link" onClick={() => loadHistoryItem(item)} type="button">{item.name}</button></td><td>{new Date(item.createdAt).toLocaleString("pt-BR")}</td><td>{item.activity}</td><td>{item.waitReductionPct}%</td><td>{item.capacityMultiplier.toFixed(1)}x</td><td>{formatDuration(item.result.simulated.avgCycleSeconds)}</td><td>{formatPercent(item.result.deltas.throughputGainPct, true)}</td><td><button className="button secondary compact" onClick={() => loadHistoryItem(item, true)} type="button">Duplicar cenário</button></td></tr>)}
+              {history.map((item) => <tr className={selectedScenarioId === item.scenarioId ? "selected-row" : ""} key={item.scenarioId}><td><button className="history-link" onClick={() => loadHistoryItem(item)} type="button">{item.name}</button></td><td>{formatDateTime(item.createdAt)}</td><td>{item.activity}</td><td>{item.waitReductionPct}%</td><td>{item.capacityMultiplier.toFixed(1)}x</td><td>{formatDuration(item.result.simulated.avgCycleSeconds)}</td><td>{formatPercent(item.result.deltas.throughputGainPct, true)}</td><td><button className="button secondary compact" onClick={() => loadHistoryItem(item, true)} type="button">Duplicar cenário</button></td></tr>)}
             </tbody></table></div>
           ) : <p>Nenhum cenário concluído para esta análise base.</p>}
         </section>
