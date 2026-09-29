@@ -208,7 +208,7 @@ export function ProcessGraph({
                 <span className="process-node-title">{node.activity}</span>
                 <span className="process-node-data">{node.caseCount} cases</span>
                 <span className="process-node-data">
-                  Espera {formatDuration(node.avgIncomingWaitSeconds)}
+                  Intervalo {formatDuration(node.avgIncomingWaitSeconds)}
                 </span>
                 {isBottleneck ? (
                   <span className="process-node-badge">Gargalo · {bottleneck.severity}</span>
