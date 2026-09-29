@@ -9,7 +9,13 @@ import { ProcessKpis } from "./process-kpis";
 import { VariantsPanel } from "./variants-panel";
 import { formatDateTime } from "./formatters";
 
-export function ProcessExplorer({ data }: { data: ProcessExplorerData }) {
+export function ProcessExplorer({
+  data,
+  simulationHrefBase = `/processes/${data.process.id}/simulation`,
+}: {
+  data: ProcessExplorerData;
+  simulationHrefBase?: string;
+}) {
   const primaryBottleneck = data.bottlenecks[0] ?? null;
   const [selectedActivity, setSelectedActivity] = useState<string | null>(
     primaryBottleneck?.activity ?? data.model.nodes[0]?.activity ?? null,
@@ -69,6 +75,7 @@ export function ProcessExplorer({ data }: { data: ProcessExplorerData }) {
           bottleneck={selectedBottleneck}
           node={selectedNode}
           onClose={() => setSelectedActivity(null)}
+          simulationHrefBase={simulationHrefBase}
           totalCases={data.model.metrics.caseCount}
         />
       </div>

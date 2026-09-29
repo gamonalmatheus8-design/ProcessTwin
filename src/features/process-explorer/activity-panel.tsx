@@ -1,4 +1,5 @@
 import type { Bottleneck, ProcessNode } from "@/core/process/types";
+import Link from "next/link";
 import { formatDuration, formatPct } from "./formatters";
 import {
   getActivityCoveragePct,
@@ -9,11 +10,13 @@ export function ActivityPanel({
   node,
   bottleneck,
   totalCases,
+  simulationHrefBase,
   onClose,
 }: {
   node: ProcessNode | null;
   bottleneck: Bottleneck | null;
   totalCases: number;
+  simulationHrefBase: string;
   onClose: () => void;
 }) {
   if (!node) {
@@ -65,6 +68,13 @@ export function ActivityPanel({
       ) : (
         <div className="neutral-box">Esta atividade não é o gargalo principal da análise.</div>
       )}
+
+      <Link
+        className={`button simulation-cta${isBottleneck ? " primary" : " secondary"}`}
+        href={`${simulationHrefBase}?activity=${encodeURIComponent(node.activity)}`}
+      >
+        Simular melhoria
+      </Link>
     </aside>
   );
 }
