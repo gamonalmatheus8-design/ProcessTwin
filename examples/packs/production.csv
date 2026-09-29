@@ -1,4 +1,25 @@
 ordem_producao,operacao,data_operacao,maquina
 OP-101,Corte,2026-09-01 08:00,CNC-02
-OP-101,Inspeção,2026-09-01 09:20,Qualidade
-OP-102,Corte,2026-09-01 09:30,CNC-02
+OP-101,Montagem,2026-09-01 09:00,Linha-A
+OP-101,Inspeção,2026-09-01 11:30,Qualidade-1
+OP-101,Embalagem,2026-09-01 12:10,Linha-A
+OP-102,Corte,2026-09-01 08:20,CNC-01
+OP-102,Montagem,2026-09-01 09:30,Linha-B
+OP-102,Inspeção,2026-09-01 13:40,Qualidade-1
+OP-102,Embalagem,2026-09-01 14:10,Linha-B
+OP-103,Corte,2026-09-01 09:00,CNC-02
+OP-103,Montagem,2026-09-01 10:00,Linha-A
+OP-103,Inspeção,2026-09-01 12:00,Qualidade-2
+OP-103,Embalagem,2026-09-01 12:25,Linha-A
+OP-104,Corte,2026-09-01 10:10,CNC-01
+OP-104,Montagem,2026-09-01 11:20,Linha-B
+OP-104,Inspeção,2026-09-01 16:30,Qualidade-1
+OP-104,Embalagem,2026-09-01 17:00,Linha-B
+OP-105,Corte,2026-09-01 11:00,CNC-02
+OP-105,Montagem,2026-09-01 12:00,Linha-A
+OP-105,Inspeção,2026-09-01 14:10,Qualidade-2
+OP-105,Embalagem,2026-09-01 14:45,Linha-A
+OP-106,Corte,2026-09-01 12:00,CNC-01
+OP-106,Montagem,2026-09-01 13:00,Linha-B
+OP-106,Inspeção,2026-09-01 18:20,Qualidade-1
+OP-106,Embalagem,2026-09-01 18:50,Linha-B
