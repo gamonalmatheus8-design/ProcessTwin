@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ImportAnalysisResponse } from "../types";
 
 const duration = (seconds: number) => {
@@ -24,6 +25,11 @@ export function AnalysisResult({ result }: { result: ImportAnalysisResponse }) {
         <h2>{analysis.model.nodes.length} atividades · {analysis.model.edges.length} transições · {analysis.model.variants.length} variantes</h2>
         <div className="flow-line">
           {analysis.model.variants[0]?.path.map((activity, index) => <span className={activity === analysis.bottleneck?.activity ? "flow-node danger" : "flow-node"} key={`${activity}-${index}`}>{activity}</span>)}
+        </div>
+        <div className="actions">
+          <Link className="button" href={`/processes/${result.process.id}/explorer`}>
+            Abrir Process Explorer
+          </Link>
         </div>
       </section>
       <div className="result-grid">
