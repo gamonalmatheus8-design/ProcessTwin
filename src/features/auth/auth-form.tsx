@@ -148,7 +148,7 @@ export function AuthForm({
       }
 
       setNotice(
-        "Conta criada. Verifique seu e-mail para confirmar o cadastro e concluir o acesso.",
+        "Conta criada. Verifique seu e-mail para confirmar o cadastro. Se não voltar automaticamente ao ProcessTwin, retorne a esta página e entre com seu e-mail e senha.",
       );
     } catch (caught) {
       setError(
