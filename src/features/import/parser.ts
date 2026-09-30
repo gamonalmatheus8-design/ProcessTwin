@@ -16,6 +16,7 @@ export function parseCsv(contents: string): ParsedCsv {
   }));
   return {
     headers,
+    duplicateHeaders: Object.keys((result.meta as typeof result.meta & { renamedHeaders?: Record<string, string> }).renamedHeaders ?? {}).length > 0,
     rows,
     delimiter: result.meta.delimiter,
     errors: result.errors.map((error) => ({ row: error.row === undefined ? undefined : error.row + 2, message: error.message })),

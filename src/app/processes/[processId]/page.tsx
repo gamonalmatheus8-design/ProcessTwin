@@ -36,6 +36,7 @@ export default async function ProcessOverviewPage({
           <h1>{result.process.name}</h1>
           <p>Este processo ainda não possui uma análise disponível.</p>
           <Link className="button" href="/processes/new">Importar dados</Link>
+          <Link className="button secondary" href={`/processes/${processId}/connectors`}>Conectores</Link>
         </section>
       </main>
     );
@@ -55,9 +56,9 @@ export default async function ProcessOverviewPage({
             {data.dataset.originalFilename ?? data.dataset.name}
           </p>
         </div>
-        <Link className="button" href={`/processes/${data.process.id}/explorer`}>
+        <div className="actions"><Link className="button secondary" href={`/processes/${processId}/connectors`}>Conectores</Link><Link className="button" href={`/processes/${data.process.id}/explorer`}>
           Abrir Process Explorer
-        </Link>
+        </Link></div>
       </header>
 
       <section className="metric-grid process-overview-kpis">
