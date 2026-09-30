@@ -7,10 +7,20 @@ export default function Home() {
         <span className="eyebrow">ProcessTwin AI</span>
         <h1>Digital Twin de Processos</h1>
         <p>
-          Envie um event log real e transforme dados operacionais em processo reconstruído,
-          gargalo, melhoria simulada e impacto mensurável.
+          Conecte dados operacionais, reconstrua processos reais, encontre
+          gargalos e simule melhorias antes de mudar a operação.
         </p>
-        <div className="actions"><Link className="button" href="/processes/new">Importar CSV</Link><Link className="button secondary" href="/demo">Ver demonstração</Link></div>
+        <div className="actions home-actions">
+          <Link className="button" href="/auth?mode=signup">
+            Criar conta
+          </Link>
+          <Link className="button secondary" href="/auth">
+            Entrar
+          </Link>
+          <Link className="button secondary" href="/demo">
+            Ver demonstração
+          </Link>
+        </div>
       </section>
     </main>
   );

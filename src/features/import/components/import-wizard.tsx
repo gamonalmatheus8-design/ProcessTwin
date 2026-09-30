@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { suggestColumnMappingV2 } from "../auto-mapping";
@@ -97,7 +98,7 @@ export function ImportWizard() {
   };
 
   if (loadingContext) return <div className="panel">Carregando contexto seguro…</div>;
-  if (!context) return <section className="panel auth-panel"><span className="eyebrow">Acesso seguro</span><h2>Entre para importar dados</h2><p>{contextError}</p><form onSubmit={signIn} className="form-stack"><label>E-mail<input type="email" required value={email} onChange={(event) => setEmail(event.target.value)} /></label><label>Senha<input type="password" required value={password} onChange={(event) => setPassword(event.target.value)} /></label>{error && <div className="error-banner">{error}</div>}<button className="button" type="submit">Entrar</button></form></section>;
+  if (!context) return <section className="panel auth-panel"><span className="eyebrow">Acesso seguro</span><h2>Entre para importar dados</h2><p>{contextError}</p><form onSubmit={signIn} className="form-stack"><label>E-mail<input autoComplete="email" type="email" required value={email} onChange={(event) => setEmail(event.target.value)} /></label><label>Senha<input autoComplete="current-password" type="password" required value={password} onChange={(event) => setPassword(event.target.value)} /></label>{error && <div className="error-banner">{error}</div>}<button className="button" type="submit">Entrar</button></form><div className="auth-panel-footer"><span>Ainda não tem uma conta?</span><Link className="text-link" href="/auth?mode=signup">Criar conta →</Link></div></section>;
 
   const writableOrganizations = context.organizations.filter((organization) => organization.canImport);
   const writableProcesses = context.processes.filter((process) => writableOrganizations.some((organization) => organization.id === process.organizationId));
