@@ -224,7 +224,7 @@ end $$;
 create function private.sheets_due_server(p_limit integer default 3) returns jsonb
 language plpgsql security definer set search_path='' as $$
 begin
- if coalesce(current_setting('request.jwt.claims',true)::jsonb->>'role','')<>'service_role' then raise insufficient_privilege; end if;
+ if current_user<>'service_role' then raise insufficient_privilege; end if;
  return (select coalesce(jsonb_agg(jsonb_build_object('id',q.id,'actorId',q.created_by,'processId',q.process_id)),'[]'::jsonb) from (
  select c.id,c.created_by,c.process_id from public.connectors c join public.connector_sync_state s on s.connector_id=c.id
  where c.type='google_sheets' and c.status='active' and c.sync_mode='scheduled' and s.next_sync_at<=clock_timestamp()
@@ -240,7 +240,7 @@ language plpgsql security definer set search_path='' as $$
 begin
  if exists(select 1 from public.connectors where id=old.connector_id and type in ('recurring_csv','google_sheets')) then
   if tg_op='UPDATE' and exists(select 1 from public.connectors where id=old.connector_id and type='google_sheets')
-   and current_setting('request.jwt.claims',true)::jsonb->>'role'='service_role'
+   and current_user='service_role'
    and old.active and not new.active and (to_jsonb(new)-'active')=(to_jsonb(old)-'active') then return new; end if;
   raise check_violation using message='Mapping is frozen';
  end if;
