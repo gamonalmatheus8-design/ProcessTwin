@@ -4,6 +4,7 @@ import "../styles/tokens.css";
 import "../styles/premium.css";
 import "../styles/light-theme.css";
 import "../styles/enterprise.css";
+import "../styles/crm.css";
 
 export const metadata: Metadata = {
   title: "ProcessTwin",
