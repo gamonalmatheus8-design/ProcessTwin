@@ -12,7 +12,7 @@ O merge exige o caminho exato do run e a existência do objeto no bucket privado
 
 ## Banco
 
-Migration: `20261001010815_recurring_csv_server_boundary.sql`.
+Migration: `20261001022150_recurring_csv_server_boundary.sql`.
 
 Inclui índices para `sync_runs(mapping_id)` e `sync_runs(analysis_run_id)`, as RPCs de servidor, revogações e políticas live. O baseline V1.5A.3 e seu contrato capturado permanecem como referência histórica. A suíte verifica esse pré-requisito antes de aplicar V1.5A.4 e testa explicitamente as novas diferenças; não substitui o snapshot apenas para acomodar uma mudança local.
 
