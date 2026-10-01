@@ -15,6 +15,7 @@ type WeightedPosition = {
 export function layoutProcessNodes(
   nodes: readonly ProcessNode[],
   variants: readonly ProcessVariant[],
+  maxColumns?: number,
 ): { nodes: PositionedNode[]; width: number; height: number } {
   if (!nodes.length) {
     return { nodes: [], width: 0, height: 0 };
@@ -42,8 +43,9 @@ export function layoutProcessNodes(
     return { node, average };
   });
 
-  const averages = [...new Set(ranked.map((item) => item.average))]
-    .sort((a, b) => a - b);
+  const averages = [...new Set(ranked.map((item) => item.average))].sort(
+    (a, b) => a - b,
+  );
 
   const groups = new Map<number, ProcessNode[]>();
   for (const item of ranked) {
@@ -61,7 +63,10 @@ export function layoutProcessNodes(
     );
   }
 
-  const maxRows = Math.max(...[...groups.values()].map((list) => list.length), 1);
+  const maxRows = Math.max(
+    ...[...groups.values()].map((list) => list.length),
+    1,
+  );
   const height =
     PADDING * 2 + maxRows * NODE_HEIGHT + Math.max(0, maxRows - 1) * ROW_GAP;
   const width =
@@ -87,7 +92,32 @@ export function layoutProcessNodes(
     });
   }
 
-  positioned.sort((a, b) => a.x - b.x || a.y - b.y || a.activity.localeCompare(b.activity, "pt-BR"));
+  positioned.sort(
+    (a, b) =>
+      a.x - b.x || a.y - b.y || a.activity.localeCompare(b.activity, "pt-BR"),
+  );
 
+  if (maxColumns !== undefined) {
+    const columns = Math.min(
+      positioned.length,
+      Math.max(1, Math.floor(maxColumns)),
+    );
+    const rows = Math.ceil(positioned.length / columns);
+    const wrapped = positioned.map((node, index) => {
+      const row = Math.floor(index / columns);
+      const column =
+        row % 2 ? columns - 1 - (index % columns) : index % columns;
+      return {
+        ...node,
+        x: PADDING + column * (NODE_WIDTH + 72),
+        y: PADDING + row * (NODE_HEIGHT + 68),
+      };
+    });
+    return {
+      nodes: wrapped,
+      width: PADDING * 2 + columns * NODE_WIDTH + (columns - 1) * 72,
+      height: PADDING * 2 + rows * NODE_HEIGHT + (rows - 1) * 68,
+    };
+  }
   return { nodes: positioned, width, height };
 }

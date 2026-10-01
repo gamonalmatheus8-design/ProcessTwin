@@ -39,6 +39,7 @@ export type AutoMappingResult = {
 
 export type CsvRow = { rowNumber: number; values: Record<string, string> };
 export type ParsedCsv = {
+  duplicateHeaders?: boolean;
   headers: string[];
   rows: CsvRow[];
   delimiter: string;

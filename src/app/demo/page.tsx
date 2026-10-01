@@ -25,6 +25,7 @@ export default function DemoPage() {
           Nenhum indicador abaixo foi digitado manualmente.
         </p>
         <div className="actions">
+          <Link className="button secondary" href="/demo/center">Explorar escola e empresa</Link>
           <Link className="button" href="/demo/explorer">Abrir Process Explorer</Link>
           <Link className="button secondary" href="/demo/simulation">Abrir Simulation Lab</Link>
         </div>

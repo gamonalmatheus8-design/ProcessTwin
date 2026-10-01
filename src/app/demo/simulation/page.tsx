@@ -1,3 +1,4 @@
+import { AppShell } from "@/components/layout/app-shell";
 import { runCoreCycle } from "@/core/process/cycle";
 import { demoEvents, demoScenario } from "@/data/demo-process";
 import { SimulationLab } from "@/features/simulation-lab/simulation-lab";
@@ -9,8 +10,7 @@ export default async function DemoSimulationPage({
   searchParams: Promise<{ activity?: string | string[] }>;
 }) {
   const query = await searchParams;
-  const requestedActivity =
-    typeof query.activity === "string" ? query.activity : query.activity?.[0];
+  const requestedActivity = typeof query.activity === "string" ? query.activity : query.activity?.[0];
   const analysis = runCoreCycle(demoEvents, demoScenario);
   const primaryBottleneck = analysis.bottleneck;
   const initialActivity =
@@ -18,14 +18,11 @@ export default async function DemoSimulationPage({
     primaryBottleneck?.activity ??
     analysis.model.nodes[0]?.activity ??
     "";
+
   const data: SimulationLabData = {
     process: { id: "demo", name: "Processo de Pedidos — Demo", status: "demo" },
     dataset: { id: "demo", name: "demo-process", originalFilename: "demo-process.csv" },
-    analysis: {
-      id: "demo",
-      createdAt: "2026-09-15T18:00:00.000Z",
-      completedAt: "2026-09-15T18:00:00.000Z",
-    },
+    analysis: { id: "demo", createdAt: "2026-09-15T18:00:00.000Z", completedAt: "2026-09-15T18:00:00.000Z" },
     activities: analysis.model.nodes,
     primaryBottleneck,
     initialActivity,
@@ -34,8 +31,10 @@ export default async function DemoSimulationPage({
   };
 
   return (
-    <main className="simulation-page">
-      <SimulationLab data={data} demo executionUrl="/api/demo-simulation" />
-    </main>
+    <AppShell active="demos" processName={data.process.name} eyebrow="Demo workspace / Simulation Lab" wide>
+      <div className="simulation-page">
+        <SimulationLab data={data} demo executionUrl="/api/demo-simulation" />
+      </div>
+    </AppShell>
   );
 }

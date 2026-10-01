@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - v1.2-process-explorer
+      - v1.5-connectors-sync
   pull_request:
     branches:
       - main
@@ -12,6 +13,20 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ci-test-only
+          POSTGRES_DB: processtwin_sync_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,5 +46,25 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: PostgreSQL sync and RLS integration
+        run: npm run test:sync-db
+        env:
+          TEST_DATABASE_URL: postgresql://postgres:ci-test-only@localhost:5432/processtwin_sync_test
+
       - name: Build
         run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Browser journeys
+        run: npm run test:e2e
+
+      - name: Save synthetic demo screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-center-screenshots
+          path: test-results/**/*.png
+          if-no-files-found: ignore
+          retention-days: 7

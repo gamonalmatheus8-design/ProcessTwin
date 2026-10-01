@@ -13,7 +13,7 @@ import { AnalysisResult } from "./analysis-result";
 import { AutoMappingPanel } from "./auto-mapping-panel";
 import { ProcessPackSelector } from "./process-pack-selector";
 
-const steps = ["Contexto", "Processo", "Arquivo", "Mapeamento", "Validação", "Resultado"];
+const steps = ["Upload", "Profile", "Mapping", "Validation", "Analysis"];
 
 export function ImportWizard() {
   const [context, setContext] = useState<ImportContext | null>(null);
@@ -93,7 +93,7 @@ export function ImportWizard() {
     if (mode === "existing") form.set("processId", processId); else form.set("processName", processName.trim());
     const response = await fetch("/api/import/process-events", { method: "POST", body: form });
     const body = await response.json() as ImportAnalysisResponse & { error?: string };
-    if (!response.ok) setError(body.error ?? "A importação não pôde ser concluída."); else { setResult(body); setStep(5); }
+    if (!response.ok) setError(body.error ?? "A importação não pôde ser concluída."); else { setResult(body); setStep(4); }
     setSubmitting(false);
   };
 
@@ -104,13 +104,87 @@ export function ImportWizard() {
   const writableProcesses = context.processes.filter((process) => writableOrganizations.some((organization) => organization.id === process.organizationId));
 
   return <div className="wizard">
-    <ol className="steps steps-six">{steps.map((label, index) => <li className={index === step ? "active" : index < step ? "done" : ""} key={label}><span>{index + 1}</span>{label}</li>)}</ol>
+    <ol className="steps">{steps.map((label, index) => <li className={index === step ? "active" : index < step ? "done" : ""} key={label}><span>{index + 1}</span>{label}</li>)}</ol>
     {error && <div className="error-banner" role="alert">{error}</div>}
-    {step === 0 && <section className="panel"><span className="eyebrow">Etapa 1</span><h2>O que você quer analisar?</h2><p>Escolha o contexto mais próximo da sua operação. Ele melhora as sugestões, sem alterar a matemática do motor.</p><ProcessPackSelector value={processPackId} onChange={selectPack} /><div className="actions"><button className="button" disabled={!processPackId} onClick={() => setStep(1)}>Continuar</button></div></section>}
-    {step === 1 && <section className="panel"><span className="eyebrow">Etapa 2 · {processPack?.label}</span><h2>Onde este log deve ser analisado?</h2><div className="choice-grid"><button className={mode === "existing" ? "choice selected" : "choice"} onClick={() => setMode("existing")} type="button">Processo existente</button><button className={mode === "new" ? "choice selected" : "choice"} onClick={() => setMode("new")} type="button">Novo processo</button></div>{mode === "existing" ? <label>Processo<select value={processId} onChange={(event) => setProcessId(event.target.value)}><option value="">Selecione</option>{writableProcesses.map((process) => <option value={process.id} key={process.id}>{process.name}</option>)}</select></label> : <div className="two-columns"><label>Organização<select value={organizationId} onChange={(event) => setOrganizationId(event.target.value)}><option value="">Selecione</option>{writableOrganizations.map((organization) => <option value={organization.id} key={organization.id}>{organization.name}</option>)}</select></label><label>Nome do processo<input maxLength={160} value={processName} onChange={(event) => setProcessName(event.target.value)} placeholder="Ex.: Pedido ao pagamento" /></label></div>}<div className="actions"><button className="button secondary" onClick={() => setStep(0)}>Voltar</button><button className="button" disabled={mode === "existing" ? !processId : !organizationId || processName.trim().length < 2} onClick={() => setStep(2)}>Continuar</button></div></section>}
-    {step === 2 && <section className="panel"><span className="eyebrow">Etapa 3 · {processPack?.label}</span><h2>Selecione o event log</h2><p>CSV com um identificador do caso, atividade e data/hora. Os nomes podem seguir a linguagem da sua operação.</p><label className="dropzone">Arquivo CSV<input type="file" accept=".csv,text/csv" onChange={(event) => void chooseFile(event.target.files?.[0] ?? null)} /><span>{file ? `${file.name} · ${(file.size / 1024).toFixed(1)} KB` : "Escolher CSV de até 10 MB"}</span></label>{parsed && <p>{parsed.rows.length} linhas detectadas · delimitador {parsed.delimiter === ";" ? "ponto e vírgula" : "vírgula"}</p>}<div className="actions"><button className="button secondary" onClick={() => setStep(1)}>Voltar</button><button className="button" disabled={!parsed?.headers.length} onClick={() => setStep(3)}>Mapear colunas</button></div></section>}
-    {step === 3 && parsed && mappingAnalysis && <section className="panel"><span className="eyebrow">Etapa 4 · Auto Mapping V2</span><h2>Confirme o mapeamento</h2><p>Combinamos nomes de colunas, o contexto de {processPack?.label.toLowerCase()} e o perfil dos valores. Sugestões abaixo de 50% não são selecionadas automaticamente.</p><AutoMappingPanel headers={parsed.headers} mapping={mapping} analysis={mappingAnalysis} onChange={setMapping} /><div className="actions"><button className="button secondary" onClick={() => setStep(2)}>Voltar</button><button className="button" disabled={!mapping.caseId || !mapping.activity || !mapping.timestamp} onClick={() => setStep(4)}>Validar dados</button></div></section>}
-    {step === 4 && validation && <section className="panel"><span className="eyebrow">Etapa 5</span><h2>Revise antes de importar</h2><div className="summary-grid">{[["Linhas", validation.summary.totalRows], ["Válidas", validation.summary.validRows], ["Inválidas", validation.summary.invalidRows], ["Cases", validation.summary.caseCount], ["Atividades", validation.summary.activityCount]].map(([label, value]) => <div key={label}><span>{label}</span><strong>{value}</strong></div>)}</div>{validation.summary.periodStart && <p>Período: {new Date(validation.summary.periodStart).toLocaleString("pt-BR")} — {new Date(validation.summary.periodEnd!).toLocaleString("pt-BR")}</p>}{validation.errors.length > 0 && <div className="warning-banner"><strong>{validation.errors.length} problema(s) detectado(s).</strong><ul>{validation.errors.slice(0, 5).map((item, index) => <li key={`${item.rowNumber}-${index}`}>Linha {item.rowNumber}: {item.message}{item.value ? ` (${item.value})` : ""}</li>)}</ul></div>}<div className="table-wrap"><table><thead><tr><th>Case ID</th><th>Atividade</th><th>Timestamp normalizado</th><th>Recurso</th></tr></thead><tbody>{validation.preview.map((event, index) => <tr key={`${event.caseId}-${index}`}><td>{event.caseId}</td><td>{event.activity}</td><td>{event.timestamp}</td><td>{event.resource || "—"}</td></tr>)}</tbody></table></div><div className="actions"><button className="button secondary" onClick={() => setStep(3)}>Ajustar mapeamento</button><button className="button" disabled={!validation.events.length || submitting} onClick={() => void submit()}>{submitting ? "Salvando e analisando…" : "Confirmar importação"}</button></div></section>}
-    {step === 5 && result && <><AnalysisResult result={result} /><div className="actions"><button className="button secondary" onClick={() => { setStep(2); setResult(null); setFile(null); setParsed(null); setMapping({}); }}>Importar outro CSV</button></div></>}
+
+    {step === 0 && <section className="panel">
+      <span className="eyebrow">Step 1 · Upload</span>
+      <h2>Comece pelo event log.</h2>
+      <p>Envie o CSV da operação. O ProcessTwin lê a estrutura antes de pedir contexto ou executar qualquer análise.</p>
+      <label className="dropzone">
+        Arquivo CSV
+        <input type="file" accept=".csv,text/csv" onChange={(event) => void chooseFile(event.target.files?.[0] ?? null)} />
+        <span>{file ? `${file.name} · ${(file.size / 1024).toFixed(1)} KB` : "Escolher CSV de até 10 MB"}</span>
+      </label>
+      {parsed && <div className="success-banner">{parsed.rows.length} linhas detectadas · {parsed.headers.length} colunas · delimitador {parsed.delimiter === ";" ? "ponto e vírgula" : "vírgula"}</div>}
+      <div className="actions"><button className="button" disabled={!parsed?.headers.length} onClick={() => setStep(1)}>Continuar para profile</button></div>
+    </section>}
+
+    {step === 1 && <section className="panel">
+      <span className="eyebrow">Step 2 · Profile</span>
+      <h2>Dê contexto ao que foi detectado.</h2>
+      <p>Escolha o tipo de processo e o destino da análise. O contexto melhora sugestões, mas não muda a matemática do motor.</p>
+      <ProcessPackSelector value={processPackId} onChange={selectPack} />
+      {processPack && <>
+        <div className="choice-grid">
+          <button className={mode === "existing" ? "choice selected" : "choice"} onClick={() => setMode("existing")} type="button">Processo existente</button>
+          <button className={mode === "new" ? "choice selected" : "choice"} onClick={() => setMode("new")} type="button">Novo processo</button>
+        </div>
+        {mode === "existing" ? <label>Processo
+          <select value={processId} onChange={(event) => setProcessId(event.target.value)}>
+            <option value="">Selecione</option>
+            {writableProcesses.map((process) => <option value={process.id} key={process.id}>{process.name}</option>)}
+          </select>
+        </label> : <div className="two-columns">
+          <label>Organização
+            <select value={organizationId} onChange={(event) => setOrganizationId(event.target.value)}>
+              <option value="">Selecione</option>
+              {writableOrganizations.map((organization) => <option value={organization.id} key={organization.id}>{organization.name}</option>)}
+            </select>
+          </label>
+          <label>Nome do processo
+            <input maxLength={160} value={processName} onChange={(event) => setProcessName(event.target.value)} placeholder="Ex.: Pedido ao pagamento" />
+          </label>
+        </div>}
+      </>}
+      <div className="actions">
+        <button className="button secondary" onClick={() => setStep(0)}>Voltar</button>
+        <button className="button" disabled={!processPackId || (mode === "existing" ? !processId : !organizationId || processName.trim().length < 2)} onClick={() => setStep(2)}>Revisar mapping</button>
+      </div>
+    </section>}
+
+    {step === 2 && parsed && mappingAnalysis && <section className="panel">
+      <span className="eyebrow">Step 3 · Mapping</span>
+      <h2>Confirme o que o ProcessTwin entendeu.</h2>
+      <p>As sugestões combinam nomes de colunas, contexto de {processPack?.label.toLowerCase()} e perfil dos valores. Mapeamentos de baixa confiança exigem revisão.</p>
+      <AutoMappingPanel headers={parsed.headers} mapping={mapping} analysis={mappingAnalysis} onChange={setMapping} />
+      <div className="actions">
+        <button className="button secondary" onClick={() => setStep(1)}>Voltar</button>
+        <button className="button" disabled={!mapping.caseId || !mapping.activity || !mapping.timestamp} onClick={() => setStep(3)}>Validar dados</button>
+      </div>
+    </section>}
+
+    {step === 3 && validation && <section className="panel">
+      <span className="eyebrow">Step 4 · Validation</span>
+      <h2>Revise antes da análise.</h2>
+      <div className="summary-grid">{[["Linhas", validation.summary.totalRows], ["Válidas", validation.summary.validRows], ["Inválidas", validation.summary.invalidRows], ["Cases", validation.summary.caseCount], ["Atividades", validation.summary.activityCount]].map(([label, value]) => <div key={label}><span>{label}</span><strong>{value}</strong></div>)}</div>
+      {validation.summary.periodStart && <p>Período: {new Date(validation.summary.periodStart).toLocaleString("pt-BR")} — {new Date(validation.summary.periodEnd!).toLocaleString("pt-BR")}</p>}
+      {validation.errors.length > 0 && <div className="warning-banner"><strong>{validation.errors.length} problema(s) detectado(s).</strong><ul>{validation.errors.slice(0, 5).map((item, index) => <li key={`${item.rowNumber}-${index}`}>Linha {item.rowNumber}: {item.message}{item.value ? ` (${item.value})` : ""}</li>)}</ul></div>}
+      <div className="table-wrap"><table><thead><tr><th>Case ID</th><th>Atividade</th><th>Timestamp normalizado</th><th>Recurso</th></tr></thead><tbody>{validation.preview.map((event, index) => <tr key={`${event.caseId}-${index}`}><td>{event.caseId}</td><td>{event.activity}</td><td>{event.timestamp}</td><td>{event.resource || "—"}</td></tr>)}</tbody></table></div>
+      <div className="actions">
+        <button className="button secondary" onClick={() => setStep(2)}>Ajustar mapping</button>
+        <button className="button" disabled={!validation.events.length || submitting} onClick={() => void submit()}>{submitting ? "Analisando processo…" : "Confirmar e analisar"}</button>
+      </div>
+    </section>}
+
+    {step === 4 && result && <>
+      <section className="panel">
+        <span className="eyebrow">Step 5 · Analysis</span>
+        <h2>Análise concluída.</h2>
+        <p>Os eventos validados foram normalizados e processados usando exatamente o dataset confirmado na etapa anterior.</p>
+      </section>
+      <AnalysisResult result={result} />
+      <div className="actions"><button className="button secondary" onClick={() => { setStep(0); setResult(null); setFile(null); setParsed(null); setMapping({}); }}>Analisar outro CSV</button></div>
+    </>}
   </div>;
 }

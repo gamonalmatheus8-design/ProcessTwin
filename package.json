@@ -7,21 +7,27 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:sync-db": "vitest run --config vitest.sync-db.config.mts",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",
     "@supabase/supabase-js": "2.117.2",
+    "google-auth-library": "11.1.0",
     "next": "16.3.6",
     "papaparse": "5.5.3",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@types/node": "22.20.3",
     "@types/papaparse": "5.3.16",
+    "@types/pg": "8.15.5",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "pg": "8.16.3",
     "typescript": "7.0.2",
     "vitest": "^5.0.2"
   }
