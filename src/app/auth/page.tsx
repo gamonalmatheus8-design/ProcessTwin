@@ -20,24 +20,20 @@ export default async function AuthPage({
 
   return (
     <main className="auth-page">
-      <div className="auth-shell">
+      <div className="auth-shell pt-auth-enterprise">
         <section className="pt-auth-visual">
-          <Link className="pt-home-brand" href="/">
-            <span className="pt-brand-mark" aria-hidden="true"><i /><i /><i /></span>
-            <strong>ProcessTwin AI</strong>
-          </Link>
-          <div>
-            <span className="eyebrow">Process intelligence, grounded in your data</span>
-            <h1>Transforme eventos operacionais em decisões melhores.</h1>
+          <Link className="pt-home-wordmark" href="/">ProcessTwin</Link>
+          <div className="pt-auth-copy-simple">
+            <span className="pt-section-label">Plataforma de análise de processos</span>
+            <h1>Dados operacionais, processo reconstruído e análise em um único workspace.</h1>
             <p>
-              Reconstrua o processo real, encontre onde o trabalho para e simule
-              cenários com hipóteses explícitas antes de agir.
+              Importe eventos, acompanhe fontes de dados e investigue gargalos
+              com o mesmo modelo de processo.
             </p>
           </div>
-          <div className="pt-proof-line">
-            <span><i /> Dados isolados por organização</span>
-            <span><i /> Análises reproduzíveis</span>
-          </div>
+          <p className="pt-auth-security-note">
+            Workspaces isolados por organização e acesso autenticado.
+          </p>
         </section>
 
         <section className="pt-auth-panel">
@@ -47,7 +43,7 @@ export default async function AuthPage({
             nextPath={safeAuthNext(params.next)}
           />
           <Link className="auth-demo-link" href="/demo/center">
-            Explorar uma demonstração antes de entrar →
+            Ver demonstração do produto
           </Link>
         </section>
       </div>

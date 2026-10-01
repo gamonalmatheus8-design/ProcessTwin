@@ -2,58 +2,59 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="pt-home">
+    <main className="pt-home pt-home-enterprise">
       <nav className="pt-home-nav" aria-label="Navegação pública">
-        <Link className="pt-home-brand" href="/">
-          <span className="pt-brand-mark" aria-hidden="true"><i /><i /><i /></span>
-          <strong>ProcessTwin AI</strong>
-        </Link>
+        <Link className="pt-home-wordmark" href="/">ProcessTwin</Link>
         <div className="pt-home-nav-actions">
-          <Link className="button secondary" href="/demo/center">Ver produto</Link>
+          <Link className="pt-home-nav-link" href="/demo/center">Produto</Link>
+          <Link className="pt-home-nav-link" href="/pilot">Piloto</Link>
           <Link className="button secondary" href="/auth">Entrar</Link>
-          <Link className="button" href="/auth?mode=signup">Criar workspace</Link>
+          <Link className="button" href="/auth?mode=signup">Criar conta</Link>
         </div>
       </nav>
 
-      <section className="pt-home-hero">
-        <div className="pt-home-copy">
-          <span className="eyebrow">Operational intelligence for real processes</span>
-          <h1>Veja sua operação como ela realmente acontece.</h1>
+      <section className="pt-enterprise-hero">
+        <div className="pt-enterprise-copy">
+          <span className="pt-section-label">Análise de processos baseada em eventos</span>
+          <h1>Reconstrua o processo real a partir dos dados da operação.</h1>
           <p>
-            Conecte dados operacionais, reconstrua fluxos reais, encontre gargalos
-            e teste melhorias antes de mudar a operação.
+            O ProcessTwin transforma registros operacionais em fluxo, tempos,
+            retrabalho, gargalos e cenários de melhoria para apoiar decisões de processo.
           </p>
           <div className="actions">
-            <Link className="button" href="/auth?mode=signup">Começar análise</Link>
-            <Link className="button secondary" href="/demo/center">Explorar demonstração</Link>
-          </div>
-          <div className="pt-proof-line" aria-label="Principais capacidades">
-            <span><i /> Process mining</span>
-            <span><i /> Live datasets</span>
-            <span><i /> Simulation lab</span>
+            <Link className="button" href="/auth?mode=signup">Criar workspace</Link>
+            <Link className="button secondary" href="/demo/center">Ver demonstração</Link>
           </div>
         </div>
 
-        <div className="pt-product-frame" aria-label="Prévia do Process Explorer">
-          <div className="pt-product-toolbar">
-            <span>Order to Cash / Process Explorer</span>
-            <span>Live dataset · atualizado agora</span>
-          </div>
-          <div className="pt-product-canvas">
-            <span className="pt-product-line a" />
-            <span className="pt-product-line b" />
-            <span className="pt-product-line c" />
-            <div className="pt-product-node one"><strong>Pedido recebido</strong><small>12.8k cases · 4 min</small></div>
-            <div className="pt-product-node two"><strong>Validar pedido</strong><small>12.4k cases · 1.4h</small></div>
-            <div className="pt-product-node three"><strong>Aprovar pagamento</strong><small>10.9k cases · 8.7h</small></div>
-            <div className="pt-product-node four"><strong>Expedir</strong><small>10.2k cases · 2.1h</small></div>
-            <div className="pt-product-insight">
-              <span>Critical bottleneck</span>
-              <strong>Aprovar pagamento</strong>
-              <small>32% dos cases afetados · intervalo médio 8.7h</small>
+        <section className="pt-operations-preview" aria-label="Exemplo de visão operacional">
+          <header>
+            <div>
+              <span>Pedidos</span>
+              <strong>Visão geral do processo</strong>
             </div>
+            <small>Dados de demonstração</small>
+          </header>
+          <div className="pt-preview-stats">
+            <div><span>Cases</span><strong>12.842</strong></div>
+            <div><span>Ciclo médio</span><strong>18h 24min</strong></div>
+            <div><span>Retrabalho</span><strong>8,2%</strong></div>
+            <div><span>Eventos</span><strong>67.419</strong></div>
           </div>
-        </div>
+          <div className="pt-preview-section">
+            <div className="pt-preview-section-head">
+              <strong>Etapas com maior intervalo</strong>
+              <span>Intervalo médio</span>
+            </div>
+            <div className="pt-preview-row"><span>Aprovar pagamento</span><strong>8h 42min</strong></div>
+            <div className="pt-preview-row"><span>Validar pedido</span><strong>3h 18min</strong></div>
+            <div className="pt-preview-row"><span>Separar expedição</span><strong>2h 07min</strong></div>
+          </div>
+          <div className="pt-preview-footer">
+            <span>Última análise</span>
+            <strong>Hoje, 14:32</strong>
+          </div>
+        </section>
       </section>
     </main>
   );
