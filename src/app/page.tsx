@@ -67,7 +67,7 @@ export default function Home() {
               <div className="pt-preview-bars" aria-label="Distribuição sintética de eventos">
                 {bars.map(([label, height]) => (
                   <div key={label}>
-                    <i style={{ height: `${height}%` }} />
+                    <i style={{ height: `${Math.round(height * 2)}px` }} />
                     <span>{label}</span>
                   </div>
                 ))}
