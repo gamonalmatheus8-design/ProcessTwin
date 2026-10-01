@@ -415,7 +415,7 @@ th { color: var(--muted); }
   .auth-panel-footer { display: grid; justify-items: center; }
 }
 /* Fair demo: scoped to avoid changing authenticated product screens. */
-.fair-page { display: block; width: min(1280px, 100%); margin: 0 auto; padding: 32px 40px 56px; }
+.fair-page { display: block; place-items: normal; width: min(1280px, 100%); margin: 0 auto; padding: 32px 40px 56px; }
 .fair-topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-bottom: 24px; border-bottom: 1px solid var(--border); font-size: 14px; }
 .fair-topbar a:hover { color: var(--accent); }
 .fair-brand { font-size: 22px; font-weight: 700; letter-spacing: -.04em; }
@@ -448,6 +448,7 @@ th { color: var(--muted); }
 .fair-step-nav button span { color: var(--accent); font-size: 12px; }
 .fair-step-nav button[aria-current=step] { color: var(--text); border-color: var(--accent); }
 .fair-stage { padding: 30px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; min-width: 0; }
+.fair-stage .table-wrap { max-width: 100%; }
 .fair-stage > h2 { font-size: clamp(24px, 3vw, 34px); letter-spacing: -.03em; margin: 0 0 18px; }
 .fair-stage caption { text-align: left; color: var(--muted); padding: 12px 0; font-size: 12px; }
 .fair-stage th { color: var(--text); font-weight: 600; }

@@ -12,7 +12,7 @@ Cada cenário contém 36 casos completos, equipes e identidades de evento estáv
 
 ## Interação e hipóteses
 
-O grafo reutiliza ProcessGraph e VariantsPanel. O usuário pode selecionar atividades, variantes, usar zoom/pan e ajustar a visualização. O CSV completo é exportado por `/api/demo-center/[scenario]/csv`, com nome `synthetic-*.csv` e os campos event_id, case_id, activity, timestamp, resource, priority e category. O endpoint aceita somente os três cenários, sem arquivos ou fontes arbitrárias. O parser real valida as exportações nos testes.
+O grafo reutiliza ProcessGraph e VariantsPanel, com disposição responsiva de uma a quatro colunas na demo para manter os rótulos legíveis. As ligações continuam exatamente as derivadas do DFG; o Explorer existente conserva sua disposição padrão. O usuário pode selecionar atividades, variantes, usar zoom/pan e ajustar a visualização. O CSV completo é exportado por `/api/demo-center/[scenario]/csv`, com nome `synthetic-*.csv` e os campos event_id, case_id, activity, timestamp, resource, priority e category. O endpoint aceita somente os três cenários, sem arquivos ou fontes arbitrárias. O parser real valida as exportações nos testes.
 
 A comparação usa simulateImprovement sem duplicar sua matemática. É possível escolher a atividade, reduzir o intervalo em 0–80% e ajustar capacidade em 1×, 1,25× ou 1,5×. Ciclo médio, P95 e casos no prazo são comparados com unidades e diferenças. O prazo de referência, escolhido para fins demonstrativos, é fixo para ambos os lados: 72h em matrículas, 120h em mensalidades e 48h em chamados. Não é um contrato de SLA de uma organização real.
 

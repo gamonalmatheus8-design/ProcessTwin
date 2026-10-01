@@ -259,6 +259,7 @@ export function DemoJourney({
               uma atividade ou destaque uma variante.
             </p>
             <ProcessGraph
+              responsive
               nodes={result.model.nodes}
               edges={result.model.edges}
               variants={result.model.variants}

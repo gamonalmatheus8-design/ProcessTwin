@@ -156,11 +156,22 @@ for (const id of demoIds)
         .getByRole("button")
         .nth(index)
         .click();
+      const overflow = await page.evaluate(() => ({
+        width: window.innerWidth,
+        scroll: document.documentElement.scrollWidth,
+        elements: Array.from(document.querySelectorAll("main *"))
+          .filter(
+            (element) =>
+              element.getBoundingClientRect().right > window.innerWidth + 1 &&
+              getComputedStyle(element).position !== "absolute",
+          )
+          .slice(0, 8)
+          .map((element) => element.className),
+      }));
       expect(
-        await page.evaluate(
-          () => document.documentElement.scrollWidth <= window.innerWidth,
-        ),
-      ).toBe(true);
+        overflow.scroll,
+        `Mobile stage ${index}: ${JSON.stringify(overflow)}`,
+      ).toBeLessThanOrEqual(overflow.width);
     }
     await page
       .getByRole("navigation", { name: "Etapas da apresentação" })
