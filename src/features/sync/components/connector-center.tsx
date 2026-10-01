@@ -114,70 +114,64 @@ export function ConnectorCenter({
     ? runs.filter((run) => run.connector_id === historyFor)
     : runs;
   return (
-    <main className="app-shell result-stack" aria-busy={busy}>
-      <header className="page-header">
+    <div className="pt-connector-center" aria-busy={busy}>
+      <header className="pt-page-heading">
         <div>
-          <span className="eyebrow">{processName} · Conectores</span>
+          <span className="eyebrow">Connector Center</span>
           <h1>Fontes do processo</h1>
           <p>
-            Conecte uma exportação recorrente e mantenha seu processo
-            atualizado.
+            Conecte fontes operacionais, acompanhe a saúde da sincronização e
+            mantenha o dataset vivo sem misturar configuração com análise.
           </p>
         </div>
         <div className="actions">
-          <Link className="button secondary" href="/pilot">
-            Guia do piloto
-          </Link>
-          <Link className="button secondary" href={`/processes/${processId}`}>
-            Voltar ao processo
-          </Link>
+          <Link className="button secondary" href="/pilot">Guia do piloto</Link>
+          <Link className="button secondary" href={`/processes/${processId}`}>Overview</Link>
         </div>
       </header>
-      <section className="panel">
-        <h2>Fontes disponíveis</h2>
-        <div className="sync-source-grid">
+
+      <section className="pt-dashboard-panel">
+        <div className="pt-section-title">
+          <div>
+            <span className="eyebrow">Add source</span>
+            <h2>Conectar nova fonte</h2>
+          </div>
+          <p>Integrações futuras permanecem visíveis sem competir com fontes ativas.</p>
+        </div>
+        <div className="pt-connector-catalog">
           <button
-            className="pack-card"
+            className="pt-source-tile"
             type="button"
             disabled={!canManage || busy}
-            onClick={() => {
-              setSetup(true);
-              setResult(null);
-            }}
+            onClick={() => { setSetup(true); setResult(null); }}
           >
             <strong>CSV recorrente</strong>
-            <span>
-              Envie novas exportações com identidade e mapeamento estáveis.
-            </span>
+            <span>Atualizações manuais com identidade e mapeamento estáveis.</span>
             <small>Conectar · Manual</small>
           </button>
           <button
-            className="pack-card"
+            className="pt-source-tile"
             type="button"
             disabled={!canManage || busy}
-            onClick={() => {
-              setSheetsSetup("new");
-              setResult(null);
-            }}
+            onClick={() => { setSheetsSetup("new"); setResult(null); }}
           >
             <strong>Google Sheets</strong>
-            <span>Conecte uma planilha privada com sua conta Google.</span>
-            <small>Conectar · Manual ou diário</small>
+            <span>Planilha privada com sincronização manual ou diária.</span>
+            <small>Conectar · OAuth</small>
           </button>
           {["REST API", "Webhook", "Banco SQL"].map((source) => (
-            <article className="pack-card unavailable" key={source}>
+            <article className="pt-source-tile unavailable" key={source}>
               <strong>{source}</strong>
-              <span>Em breve</span>
+              <span>Integração planejada para uma próxima versão.</span>
+              <small>Em breve</small>
             </article>
           ))}
         </div>
         {!canManage && (
-          <p>
-            Owner/Admin pode criar e sincronizar conectores. Você pode consultar
-            os dados e o histórico.
-          </p>
+          <p>Owner/Admin pode criar e sincronizar conectores. Seu perfil mantém acesso de leitura ao histórico.</p>
         )}
       </section>
+
       {sheetsSetup && (
         <SheetsSetup
           key={sheetsSetup}
@@ -196,114 +190,112 @@ export function ConnectorCenter({
           onResult={receive}
         />
       )}
-      {connectors.map((connector) => (
-        <section className="panel" key={connector.id}>
-          <span className="eyebrow">
-            {connector.type === "recurring_csv"
-              ? "CSV recorrente"
-              : connector.type === "google_sheets"
-                ? "Google Sheets"
-                : connector.type}{" "}
-            · {syncStateLabel(connector.status)}
-          </span>
-          <h2>{connector.name}</h2>
-          <dl className="sync-review">
-            <dt>Dataset</dt>
-            <dd>{connector.datasetName}</dd>
-            <dt>Última sincronização</dt>
-            <dd>
-              {connector.lastSync
-                ? formatDateTime(connector.lastSync)
-                : "Ainda não executada"}
-            </dd>
-            <dt>Último sucesso</dt>
-            <dd>
-              {connector.lastSuccess
-                ? formatDateTime(connector.lastSuccess)
-                : "Ainda não executada"}
-            </dd>
-            <dt>Próxima sincronização</dt>
-            <dd>
-              {connector.type === "google_sheets"
-                ? ["paused", "needs_attention", "needs_reauth"].includes(
-                    connector.status,
-                  )
-                  ? "Pausada · requer revisão"
-                  : connector.nextSync
-                    ? formatDateTime(connector.nextSync)
-                    : "Manual"
-                : "Manual · envie um novo arquivo"}
-            </dd>
-            <dt>Total de execuções</dt>
-            <dd>{connector.totalRuns}</dd>
-          </dl>
-          <div className="actions">
-            <a
-              className="button secondary"
-              href="#sync-history"
-              onClick={() => setHistoryFor(connector.id)}
-            >
-              Ver histórico
-            </a>
-            {canManage && connector.type === "recurring_csv" && (
-              <button
-                className="button"
-                type="button"
-                disabled={
-                  busy ||
-                  ["paused", "disabled", "needs_reauth"].includes(
-                    connector.status,
-                  )
-                }
-                onClick={() => {
-                  setUploadTo(connector.id);
-                  setFile(null);
-                  setResult(null);
-                }}
-              >
-                Sincronizar novamente
-              </button>
-            )}
-            {canManage && connector.type === "google_sheets" && (
-              <>
-                <button
-                  className="button"
-                  disabled={
-                    busy || !["draft", "active"].includes(connector.status)
-                  }
-                  onClick={() => void sheetsAction("sync", connector.id)}
-                >
-                  Sincronizar agora
-                </button>
-                <button
-                  className="button secondary"
-                  disabled={busy}
-                  onClick={() => setSheetsSetup(connector.id)}
-                >
-                  Revisar / reconectar
-                </button>
-                {connector.status === "active" && (
-                  <button
-                    className="button secondary"
-                    disabled={busy}
-                    onClick={() => void sheetsAction("pause", connector.id)}
-                  >
-                    Pausar
-                  </button>
-                )}
-              </>
-            )}
+
+      <section>
+        <div className="pt-section-title">
+          <div>
+            <span className="eyebrow">Operational status</span>
+            <h2>Fontes conectadas</h2>
           </div>
-        </section>
-      ))}
+          <p>{connectors.length} fonte(s) configurada(s)</p>
+        </div>
+
+        {connectors.length ? (
+          <div className="pt-connector-list">
+            {connectors.map((connector) => (
+              <article className="pt-connector-row" key={connector.id}>
+                <div className="pt-connector-name">
+                  <strong>{connector.name}</strong>
+                  <span>
+                    <i className={`pt-status-dot ${connector.status}`} />
+                    {connector.type === "recurring_csv"
+                      ? "CSV recorrente"
+                      : connector.type === "google_sheets"
+                        ? "Google Sheets"
+                        : connector.type}
+                    {" · "}
+                    {syncStateLabel(connector.status)}
+                  </span>
+                </div>
+                <div className="pt-connector-meta">
+                  <span>Dataset</span>
+                  <strong>{connector.datasetName}</strong>
+                </div>
+                <div className="pt-connector-meta">
+                  <span>Última sincronização</span>
+                  <strong>{connector.lastSync ? formatDateTime(connector.lastSync) : "Ainda não executada"}</strong>
+                </div>
+                <div className="pt-connector-meta">
+                  <span>Próxima sincronização</span>
+                  <strong>
+                    {connector.type === "google_sheets"
+                      ? ["paused", "needs_attention", "needs_reauth"].includes(connector.status)
+                        ? "Pausada · revisar"
+                        : connector.nextSync
+                          ? formatDateTime(connector.nextSync)
+                          : "Manual"
+                      : "Manual"}
+                  </strong>
+                </div>
+                <div className="pt-connector-actions">
+                  <a className="button secondary compact" href="#sync-history" onClick={() => setHistoryFor(connector.id)}>
+                    Histórico
+                  </a>
+                  {canManage && connector.type === "recurring_csv" && (
+                    <button
+                      className="button compact"
+                      type="button"
+                      disabled={busy || ["paused", "disabled", "needs_reauth"].includes(connector.status)}
+                      onClick={() => { setUploadTo(connector.id); setFile(null); setResult(null); }}
+                    >
+                      Sincronizar
+                    </button>
+                  )}
+                  {canManage && connector.type === "google_sheets" && (
+                    <>
+                      <button
+                        className="button compact"
+                        disabled={busy || !["draft", "active"].includes(connector.status)}
+                        onClick={() => void sheetsAction("sync", connector.id)}
+                      >
+                        Sync now
+                      </button>
+                      <button
+                        className="button secondary compact"
+                        disabled={busy}
+                        onClick={() => setSheetsSetup(connector.id)}
+                      >
+                        Revisar
+                      </button>
+                      {connector.status === "active" && (
+                        <button
+                          className="button secondary compact"
+                          disabled={busy}
+                          onClick={() => void sheetsAction("pause", connector.id)}
+                        >
+                          Pausar
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="panel empty-state">
+            <span className="eyebrow">No sources yet</span>
+            <h2>Conecte a primeira fonte operacional</h2>
+            <p>CSV recorrente e Google Sheets já podem manter um dataset vivo para este processo.</p>
+          </div>
+        )}
+      </section>
+
       {uploadTo && (
         <section className="panel">
+          <span className="eyebrow">Recurring CSV</span>
           <h2>Sincronizar novamente</h2>
-          <p>
-            O mesmo mapeamento e a mesma identidade serão aplicados. Se uma
-            coluna configurada estiver ausente, o arquivo será interrompido sem
-            alterar os eventos salvos.
-          </p>
+          <p>O mesmo mapeamento e identidade serão reaplicados. Schema drift pausa a atualização antes de alterar eventos salvos.</p>
           <label>
             Novo CSV
             <input
@@ -314,12 +306,7 @@ export function ConnectorCenter({
                 const selected = event.target.files?.[0];
                 setFile(null);
                 setError("");
-                if (
-                  selected &&
-                  (!selected.name.toLowerCase().endsWith(".csv") ||
-                    !selected.size ||
-                    selected.size > 4 * 1024 * 1024)
-                ) {
+                if (selected && (!selected.name.toLowerCase().endsWith(".csv") || !selected.size || selected.size > 4 * 1024 * 1024)) {
                   setError("Selecione um CSV entre 1 byte e 4 MB.");
                   return;
                 }
@@ -328,91 +315,46 @@ export function ConnectorCenter({
             />
           </label>
           <div className="actions">
-            <button
-              className="button secondary"
-              disabled={busy}
-              onClick={() => setUploadTo(null)}
-            >
-              Cancelar
-            </button>
-            <button
-              className="button"
-              disabled={!file || busy}
-              onClick={resync}
-            >
-              {busy ? "Sincronizando…" : "Sincronizar CSV"}
-            </button>
+            <button className="button secondary" disabled={busy} onClick={() => setUploadTo(null)}>Cancelar</button>
+            <button className="button" disabled={!file || busy} onClick={resync}>{busy ? "Sincronizando…" : "Sincronizar CSV"}</button>
           </div>
         </section>
       )}
-      {error && (
-        <p role="alert" className="error-banner">
-          {error}
-        </p>
-      )}
+
+      {error && <p role="alert" className="error-banner">{error}</p>}
       {result && (
         <SyncResult
           result={result}
           explorerHref={`/processes/${processId}/explorer`}
-          onRetryAnalysis={
-            canManage && !busy ? () => retry(result.run.id) : undefined
-          }
+          onRetryAnalysis={canManage && !busy ? () => retry(result.run.id) : undefined}
         />
       )}
-      <section className="panel" id="sync-history">
-        <h2>Histórico de sincronizações</h2>
-        <p>Últimas 50 execuções, da mais recente para a mais antiga.</p>
+
+      <section className="pt-dashboard-panel" id="sync-history">
+        <div className="pt-section-title">
+          <div>
+            <span className="eyebrow">Execution history</span>
+            <h2>Histórico de sincronizações</h2>
+          </div>
+          <p>Últimas 50 execuções</p>
+        </div>
         {historyFor && (
-          <button
-            className="button secondary"
-            onClick={() => setHistoryFor(null)}
-          >
-            Todos os conectores
-          </button>
+          <button className="button secondary compact" onClick={() => setHistoryFor(null)}>Mostrar todos</button>
         )}
         <div className="sync-table">
           <table>
             <thead>
               <tr>
-                {[
-                  "Data",
-                  "Origem",
-                  "Duração",
-                  "Status",
-                  "Arquivo",
-                  "Recebidos",
-                  "Novos",
-                  "Atualizados",
-                  "Duplicados",
-                  "Inválidos",
-                  "Análise",
-                ].map((label) => (
-                  <th key={label}>{label}</th>
-                ))}
+                {["Data","Origem","Duração","Status","Arquivo","Recebidos","Novos","Atualizados","Duplicados","Inválidos","Análise"].map((label) => <th key={label}>{label}</th>)}
               </tr>
             </thead>
             <tbody>
               {history.map((run) => (
                 <tr key={run.id}>
-                  <td>
-                    {run.started_at ? formatDateTime(run.started_at) : "—"}
-                  </td>
-                  <td>
-                    {run.trigger === "scheduled"
-                      ? "Agendada"
-                      : run.trigger === "retry"
-                        ? "Recuperação"
-                        : "Manual"}
-                  </td>
-                  <td>
-                    {run.started_at && run.completed_at
-                      ? `${Math.max(0, Math.round((Date.parse(run.completed_at) - Date.parse(run.started_at)) / 1000))}s`
-                      : "—"}
-                  </td>
-                  <td>
-                    {syncStateLabel(run.status)}
-                    {run.error_message && <small>{run.error_message}</small>}
-                  </td>
+                  <td>{run.started_at ? formatDateTime(run.started_at) : "—"}</td>
+                  <td>{run.trigger === "scheduled" ? "Agendada" : run.trigger === "retry" ? "Recuperação" : "Manual"}</td>
+                  <td>{run.started_at && run.completed_at ? `${Math.max(0, Math.round((Date.parse(run.completed_at) - Date.parse(run.started_at)) / 1000))}s` : "—"}</td>
+                  <td><span className="pt-table-status"><i className={`pt-status-dot ${run.status}`} />{syncStateLabel(run.status)}</span>{run.error_message && <small>{run.error_message}</small>}</td>
                   <td>{run.filename ?? "—"}</td>
                   <td>{run.fetched_count}</td>
                   <td>{run.accepted_count}</td>
@@ -421,16 +363,9 @@ export function ConnectorCenter({
                   <td>{run.invalid_count}</td>
                   <td>
                     {analysisStateLabel(run.analysis_status)}
-                    {canManage &&
-                      ["failed", "pending"].includes(run.analysis_status) && (
-                        <button
-                          disabled={busy}
-                          className="button secondary"
-                          onClick={() => retry(run.id)}
-                        >
-                          Reanalisar
-                        </button>
-                      )}
+                    {canManage && ["failed", "pending"].includes(run.analysis_status) && (
+                      <button disabled={busy} className="button secondary compact" onClick={() => retry(run.id)}>Reanalisar</button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -439,6 +374,6 @@ export function ConnectorCenter({
         </div>
         {!history.length && <p>Nenhuma sincronização registrada.</p>}
       </section>
-    </main>
+    </div>
   );
 }

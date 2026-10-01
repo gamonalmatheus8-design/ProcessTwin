@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import { AppShell } from "@/components/layout/app-shell";
 import { ConnectorCenter } from "@/features/sync/components/connector-center";
 import type { SyncRun } from "@/features/sync/types";
 import { sheetsReady } from "@/features/google-sheets/security";
@@ -118,21 +119,29 @@ export default async function ConnectorsPage({
     }),
   );
   return (
-    <ConnectorCenter
-      sheetsAvailable={sheetsReady()}
-      googleNotice={
-        ["connected", "failed"].includes(query.google ?? "")
-          ? query.google
-          : undefined
-      }
+    <AppShell
+      active="connectors"
       processId={processId}
       processName={process.name}
-      connectors={cards}
-      runs={(runs ?? []) as SyncRun[]}
-      canManage={
-        organization?.created_by === user.id ||
-        ["owner", "admin"].includes(member?.role ?? "")
-      }
-    />
+      eyebrow="Operations / Connector Center"
+      wide
+    >
+      <ConnectorCenter
+        sheetsAvailable={sheetsReady()}
+        googleNotice={
+          ["connected", "failed"].includes(query.google ?? "")
+            ? query.google
+            : undefined
+        }
+        processId={processId}
+        processName={process.name}
+        connectors={cards}
+        runs={(runs ?? []) as SyncRun[]}
+        canManage={
+          organization?.created_by === user.id ||
+          ["owner", "admin"].includes(member?.role ?? "")
+        }
+      />
+    </AppShell>
   );
 }
