@@ -22,23 +22,36 @@ async function asUser<T>(user: string, work: (client: PoolClient) => Promise<T>)
     const result = await work(client); await client.query("commit"); return result;
   } catch (error) { await client.query("rollback"); throw error; } finally { client.release(); }
 }
+async function asServer<T>(actor: string, work: (client: PoolClient) => Promise<T>) {
+  const client = await pool.connect();
+  try {
+    await client.query("begin"); await client.query("set local role service_role");
+    await client.query("select set_config('request.jwt.claims',$1,true)", [JSON.stringify({ role: "service_role" })]);
+    const result = await work(client); await client.query("commit"); return result;
+  } catch (error) { await client.query("rollback"); throw error; } finally { client.release(); }
+}
+let referenceContract: unknown;
 async function create(client: PoolClient, target = processId) {
   return (await client.query("select public.recurring_csv_create($1,'Test CSV','orders',$2::jsonb,$3::jsonb,$4) as result", [target, JSON.stringify(demoSyncMapping), JSON.stringify(demoSyncIdentity), batch1.schemaHash])).rows[0].result as { connectorId: string; datasetId: string };
 }
 async function start(client: PoolClient, connector: string) {
   return (await client.query("select public.recurring_csv_start($1,'test.csv') as result", [connector])).rows[0].result;
 }
-async function merge(client: PoolClient, run: Record<string, string>, batch = batch1, events = batch.records) {
+async function merge(client: PoolClient, run: Record<string, string>, batch = batch1, events = batch.records, actor = owner, archive = true) {
   const path = `${run.organization_id}/${run.process_id}/${run.dataset_id}/sync/${run.id}/test.csv`;
-  return (await client.query("select public.recurring_csv_merge($1,$2::jsonb,$3,$4,$5,$6) as result", [run.id, JSON.stringify(events), batch.fetched, batch.invalid, batch.schemaHash, path])).rows[0].result;
+  if (archive) await pool.query("insert into storage.objects(bucket_id,name) select 'process-datasets',$1 where not exists(select 1 from storage.objects where bucket_id='process-datasets' and name=$1)", [path]);
+  return (await client.query("select public.recurring_csv_merge_server($7,$1,$2::jsonb,$3,$4,$5,$6) as result", [run.id, JSON.stringify(events), batch.fetched, batch.invalid, batch.schemaHash, path, actor])).rows[0].result;
 }
-async function sync(connector: string, batch = batch1) { const run = await asUser(owner, (c) => start(c, connector)); return asUser(owner, (c) => merge(c, run, batch)); }
+async function sync(connector: string, batch = batch1) { const run = await asUser(owner, (c) => start(c, connector)); return asServer(owner, (c) => merge(c, run, batch)); }
 beforeAll(async () => {
   const exists = await pool.query("select to_regclass('public.connectors') as table");
   if (exists.rows[0].table) throw new Error("Test database must be empty; refusing to overwrite existing schema.");
   await pool.query(readFileSync("supabase/tests/bootstrap.sql", "utf8"));
   await pool.query(readFileSync("supabase/baselines/20260930234128_foundation_baseline.sql", "utf8"));
-  for (const file of readdirSync("supabase/migrations").filter((name) => name.endsWith(".sql")).sort()) await pool.query(readFileSync(`supabase/migrations/${file}`, "utf8"));
+  for (const file of readdirSync("supabase/migrations").filter((name) => name.endsWith(".sql")).sort()) {
+    if (file.endsWith("recurring_csv_server_boundary.sql")) referenceContract = (await pool.query(readFileSync("supabase/schema-contract.sql", "utf8"))).rows[0].contract;
+    await pool.query(readFileSync(`supabase/migrations/${file}`, "utf8"));
+  }
 });
 beforeEach(async () => {
   // Only this explicitly named disposable database is truncated, never a connected Supabase project.
@@ -52,12 +65,67 @@ beforeEach(async () => {
 afterAll(async () => { await pool.end(); });
 
 describe("real PostgreSQL recurring CSV RPCs", () => {
+  it("browser roles cannot submit fabricated events or analyses through old or server RPCs", async () => {
+    const signatures = [
+      "recurring_csv_merge(uuid,jsonb,integer,integer,text,text)",
+      "recurring_csv_analysis(uuid,bigint,jsonb)",
+      "recurring_csv_merge_server(uuid,uuid,jsonb,integer,integer,text,text)",
+      "recurring_csv_analysis_server(uuid,uuid,bigint,jsonb)",
+    ];
+    for (const schema of ["public", "private"]) for (const signature of signatures) {
+      const grants = await pool.query("select has_function_privilege('authenticated',$1,'execute') as session,has_function_privilege('anon',$1,'execute') as anon", [`${schema}.${signature}`]);
+      expect(grants.rows[0]).toEqual({ session: false, anon: false });
+    }
+    const connector = await asUser(owner, c => create(c));
+    const run = await asUser(owner, c => start(c, connector.connectorId));
+    for (const user of [owner, analyst, viewer, outsider]) {
+      await expect(asUser(user, c => c.query("select public.recurring_csv_merge($1,'[]',1,0,$2,'fake')", [run.id,batch1.schemaHash]))).rejects.toThrow("permission denied");
+      await expect(asUser(user, c => c.query("select public.recurring_csv_analysis_server($1,$2,1,'{}')", [user,run.id]))).rejects.toThrow("permission denied");
+    }
+    expect((await pool.query("select count(*)::int as n from public.process_events")).rows[0].n).toBe(0);
+    expect((await pool.query("select count(*)::int as n from public.analysis_runs")).rows[0].n).toBe(0);
+  });
+  it("direct live result writes cannot bypass RPC protection; snapshot results remain writable", async () => {
+    const connector = await asUser(owner, c => create(c));
+    const run = await sync(connector.connectorId);
+    const snapshot = await asUser(owner, async c => (await c.query("select public.recurring_csv_snapshot($1) as result", [run.id])).rows[0].result);
+    await asServer(owner, c => c.query("select public.recurring_csv_analysis_server($1,$2,$3,$4)", [owner,run.id,snapshot.revision,JSON.stringify(runCoreCycle(snapshot.events))]));
+    await expect(asUser(owner, c => c.query("insert into public.analysis_runs(organization_id,process_id,dataset_id,status,created_by) values($1,$2,$3,'completed',$4)", [org,processId,connector.datasetId,owner]))).rejects.toThrow();
+    for (const table of ["analysis_runs","process_models","bottlenecks"]) {
+      expect(await asUser(owner, async c => (await c.query(`delete from public.${table}`)).rowCount)).toBe(0);
+    }
+    expect(await asUser(owner, async c => (await c.query("update public.process_models set metrics='{}'")).rowCount)).toBe(0);
+    await asUser(owner, async c => {
+      const dataset = (await c.query("insert into public.datasets(organization_id,process_id,name,source_type,dataset_mode,uploaded_by) values($1,$2,'Snapshot','csv','snapshot',$3) returning id", [org,processId,owner])).rows[0].id;
+      const analysis = (await c.query("insert into public.analysis_runs(organization_id,process_id,dataset_id,status,created_by) values($1,$2,$3,'completed',$4) returning id", [org,processId,dataset,owner])).rows[0].id;
+      await c.query("insert into public.process_models(organization_id,process_id,dataset_id,analysis_run_id,model_version,graph,metrics,variants) values($1,$2,$3,$4,'core-v1.1','{}','{}','[]')", [org,processId,dataset,analysis]);
+    });
+    expect((await pool.query("select count(*)::int as n from public.process_models")).rows[0].n).toBe(2);
+  });
+  it("trusted server still rejects missing, downgraded and cross-tenant actors", async () => {
+    const connector = await asUser(owner, c => create(c));
+    const run = await asUser(owner, c => start(c, connector.connectorId));
+    for (const actor of [analyst, viewer, outsider, null]) {
+      await expect(asServer(owner, c => merge(c, run, batch1, batch1.records, actor as unknown as string))).rejects.toThrow();
+    }
+    await pool.query("update public.organizations set created_by=$1 where id=$2", [outsider,org]);
+    await pool.query("update public.organization_members set role='viewer' where user_id=$1", [owner]);
+    await expect(asServer(owner, c => merge(c, run))).rejects.toThrow("Owner/admin");
+    expect((await pool.query("select count(*)::int as n from public.process_events")).rows[0].n).toBe(0);
+  });
+  it("trusted merge refuses a missing archive and new foreign keys have covering indexes", async () => {
+    const connector = await asUser(owner, c => create(c));
+    const run = await asUser(owner, c => start(c, connector.connectorId));
+    await expect(asServer(owner, c => merge(c, run, batch1, batch1.records, owner, false))).rejects.toThrow("Archived CSV required");
+    const indexes = await pool.query("select indexname from pg_indexes where tablename='sync_runs' and indexname in ('sync_runs_mapping_idx','sync_runs_analysis_idx')");
+    expect(indexes.rows).toHaveLength(2);
+  });
   it("baseline refuses a nonempty application schema without modifying it", async () => {
     await expect(pool.query(readFileSync("supabase/baselines/20260930234128_foundation_baseline.sql", "utf8"))).rejects.toThrow("empty public schema");
     expect((await pool.query("select count(*)::int as n from public.organizations")).rows[0].n).toBe(1);
   });
-  it("fresh baseline plus migrations reproduces the remote application schema contract", async () => {
-    const actual = (await pool.query(readFileSync("supabase/schema-contract.sql", "utf8"))).rows[0].contract;
+  it("V1.5A.3 prerequisite reproduces the captured remote schema before V1.5A.4", async () => {
+    const actual = referenceContract;
     expect(actual).toEqual(JSON.parse(readFileSync("supabase/baselines/schema-contract.json", "utf8")));
   });
   it("session roles cannot truncate tables or install triggers across tenant boundaries", async () => {
@@ -72,16 +140,16 @@ describe("real PostgreSQL recurring CSV RPCs", () => {
     const connector = await asUser(owner, (c) => create(c));
     const client = {
       rpc: async (name: string, args: Record<string, unknown>) => {
-        if (!["recurring_csv_start", "recurring_csv_merge", "recurring_csv_fail", "recurring_csv_snapshot", "recurring_csv_analysis"].includes(name)) throw new Error("Unexpected RPC");
-        try { return { data: await asUser(owner, async (c) => (await c.query(`select public.${name}(${Object.keys(args).map((key, index) => `${key} => $${index + 1}`).join(",")}) as result`, Object.values(args).map((value) => value && typeof value === "object" ? JSON.stringify(value) : value))).rows[0].result), error: null }; }
+        if (!["recurring_csv_start", "recurring_csv_merge_server", "recurring_csv_fail", "recurring_csv_snapshot", "recurring_csv_analysis_server"].includes(name)) throw new Error("Unexpected RPC");
+        try { return { data: await (name.endsWith("_server") ? asServer : asUser)(owner, async (c) => (await c.query(`select public.${name}(${Object.keys(args).map((key, index) => `${key} => $${index + 1}`).join(",")}) as result`, Object.values(args).map((value) => value && typeof value === "object" ? JSON.stringify(value) : value))).rows[0].result), error: null }; }
         catch (error) { return { data: null, error }; }
       },
       storage: { from: (bucket: string) => ({ upload: async (path: string) => { try { await asUser(owner, (c) => c.query("insert into storage.objects(bucket_id,name) values($1,$2)", [bucket, path])); return { error: null }; } catch (error) { return { error }; } } }) },
     } as unknown as SupabaseClient;
     const mapping = { canonical_mapping: demoSyncMapping, identity_config: demoSyncIdentity, source_schema_hash: batch1.schemaHash };
-    const first = await synchronizeRecurringCsv({ client, connectorId: connector.connectorId, file: new File([ordersSync01], "orders-sync-01.csv"), mapping });
-    const second = await synchronizeRecurringCsv({ client, connectorId: connector.connectorId, file: new File([ordersSync02], "orders-sync-02.csv"), mapping });
-    const duplicate = await synchronizeRecurringCsv({ client, connectorId: connector.connectorId, file: new File([ordersSync02], "orders-sync-02.csv"), mapping });
+    const first = await synchronizeRecurringCsv({ client, writer: { client, actorId: owner }, connectorId: connector.connectorId, file: new File([ordersSync01], "orders-sync-01.csv"), mapping });
+    const second = await synchronizeRecurringCsv({ client, writer: { client, actorId: owner }, connectorId: connector.connectorId, file: new File([ordersSync02], "orders-sync-02.csv"), mapping });
+    const duplicate = await synchronizeRecurringCsv({ client, writer: { client, actorId: owner }, connectorId: connector.connectorId, file: new File([ordersSync02], "orders-sync-02.csv"), mapping });
     expect(first).toMatchObject({ analysisExecuted: true, run: { accepted_count: 100 } });
     expect(second).toMatchObject({ analysisExecuted: true, run: { accepted_count: 20, updated_count: 3, duplicate_count: 100 } });
     expect(duplicate).toMatchObject({ analysisExecuted: false, run: { accepted_count: 0, updated_count: 0, duplicate_count: 123 } });
@@ -100,10 +168,10 @@ describe("real PostgreSQL recurring CSV RPCs", () => {
   it("same CSV twice, reordered rows, and exact-run response retry are no-ops", async () => {
     const connector = await asUser(owner, (c) => create(c));
     const run = await asUser(owner, (c) => start(c, connector.connectorId));
-    await asUser(owner, (c) => merge(c, run));
-    expect(await asUser(owner, (c) => merge(c, run))).toMatchObject({ accepted_count: 100 });
+    await asServer(owner, (c) => merge(c, run));
+    expect(await asServer(owner, (c) => merge(c, run))).toMatchObject({ accepted_count: 100 });
     const next = await asUser(owner, (c) => start(c, connector.connectorId));
-    expect(await asUser(owner, (c) => merge(c, next, batch1, [...batch1.records].reverse()))).toMatchObject({ accepted_count: 0, updated_count: 0, duplicate_count: 100 });
+    expect(await asServer(owner, (c) => merge(c, next, batch1, [...batch1.records].reverse()))).toMatchObject({ accepted_count: 0, updated_count: 0, duplicate_count: 100 });
   });
   it("two concurrent requests on same connector serialize and retain unique indexes", async () => {
     const connector = await asUser(owner, (c) => create(c));
@@ -111,12 +179,12 @@ describe("real PostgreSQL recurring CSV RPCs", () => {
     const b = await asUser(owner, (c) => start(c, connector.connectorId));
     let release!: () => void;
     const locked = new Promise<void>((resolve) => { release = resolve; });
-    const first = asUser(owner, async (c) => {
+    const first = asServer(owner, async (c) => {
       // RPC holds its dataset lock until this surrounding transaction commits.
       const result = await merge(c, a); release(); await c.query("select pg_sleep(0.2)"); return result;
     });
     await locked;
-    const second = asUser(owner, (c) => merge(c, b));
+    const second = asServer(owner, (c) => merge(c, b));
     const results = await Promise.all([first, second]);
     expect(results.map((run) => run.accepted_count).sort()).toEqual([0, 100]);
     expect(results.map((run) => run.duplicate_count).sort()).toEqual([0, 100]);
@@ -143,9 +211,9 @@ describe("real PostgreSQL recurring CSV RPCs", () => {
   it("a failed batch rolls back its earlier inserts, and retry is safe", async () => {
     const connector = await asUser(owner, (c) => create(c)); const run = await asUser(owner, (c) => start(c, connector.connectorId));
     const bad = [...batch1.records]; bad[50] = { ...bad[50], timestamp: "invalid date" };
-    await expect(asUser(owner, (c) => merge(c, run, batch1, bad))).rejects.toThrow();
+    await expect(asServer(owner, (c) => merge(c, run, batch1, bad))).rejects.toThrow();
     expect((await pool.query("select count(*)::int as n from public.process_events")).rows[0].n).toBe(0);
-    expect(await asUser(owner, (c) => merge(c, run))).toMatchObject({ accepted_count: 100 });
+    expect(await asServer(owner, (c) => merge(c, run))).toMatchObject({ accepted_count: 100 });
     expect(await sync(connector.connectorId)).toMatchObject({ accepted_count: 0, duplicate_count: 100 });
   });
   it("schema drift closes the run and flags attention without mutating mapping", async () => {
@@ -168,7 +236,7 @@ describe("real PostgreSQL recurring CSV RPCs", () => {
     const snapshot = await asUser(owner, async (c) => (await c.query("select public.recurring_csv_snapshot($1) as result", [run.id])).rows[0].result);
     expect(snapshot.events).toHaveLength(120);
     const result = runCoreCycle(snapshot.events);
-    const persisted = await asUser(owner, async (c) => (await c.query("select public.recurring_csv_analysis($1,$2,$3) as result", [run.id, snapshot.revision, JSON.stringify(result)])).rows[0].result);
+    const persisted = await asServer(owner, async (c) => (await c.query("select public.recurring_csv_analysis_server($4,$1,$2,$3) as result", [run.id, snapshot.revision, JSON.stringify(result), owner])).rows[0].result);
     expect(persisted.analysis_status).toBe("succeeded");
     const duplicate = await sync(connector.connectorId, batch2);
     const noSnapshot = await asUser(owner, async (c) => (await c.query("select public.recurring_csv_snapshot($1) as result", [duplicate.id])).rows[0].result);
@@ -177,19 +245,19 @@ describe("real PostgreSQL recurring CSV RPCs", () => {
   });
   it("analysis failure leaves ingestion valid and explicit retry persists analysis atomically", async () => {
     const connector = await asUser(owner, (c) => create(c)); const run = await sync(connector.connectorId);
-    await asUser(owner, (c) => c.query("select public.recurring_csv_analysis($1,0,null)", [run.id]));
+    await asServer(owner, (c) => c.query("select public.recurring_csv_analysis_server($2,$1,0,null)", [run.id, owner]));
     expect((await pool.query("select status,analysis_status from public.sync_runs")).rows[0]).toEqual({ status: "succeeded", analysis_status: "failed" });
     expect((await pool.query("select count(*)::int as n from public.process_events")).rows[0].n).toBe(100);
     await sync(connector.connectorId);
     const snapshot = await asUser(owner, async (c) => (await c.query("select public.recurring_csv_snapshot($1) as result", [run.id])).rows[0].result);
-    await asUser(owner, (c) => c.query("select public.recurring_csv_analysis($1,$2,$3)", [run.id, snapshot.revision, JSON.stringify(runCoreCycle(snapshot.events))]));
+    await asServer(owner, (c) => c.query("select public.recurring_csv_analysis_server($4,$1,$2,$3)", [run.id, snapshot.revision, JSON.stringify(runCoreCycle(snapshot.events)), owner]));
     expect((await pool.query("select count(*)::int as n from public.process_models")).rows[0].n).toBe(1);
   });
   it("stale analysis cannot replace newer live dataset revision", async () => {
     const connector = await asUser(owner, (c) => create(c)); const first = await sync(connector.connectorId);
     const snapshot = await asUser(owner, async (c) => (await c.query("select public.recurring_csv_snapshot($1) as result", [first.id])).rows[0].result);
     await sync(connector.connectorId, batch2);
-    const stale = await asUser(owner, async (c) => (await c.query("select public.recurring_csv_analysis($1,$2,$3) as result", [first.id, snapshot.revision, JSON.stringify(runCoreCycle(snapshot.events))])).rows[0].result);
+    const stale = await asServer(owner, async (c) => (await c.query("select public.recurring_csv_analysis_server($4,$1,$2,$3) as result", [first.id, snapshot.revision, JSON.stringify(runCoreCycle(snapshot.events)), owner])).rows[0].result);
     expect(stale.analysis_status).toBe("superseded");
     expect((await pool.query("select count(*)::int as n from public.analysis_runs")).rows[0].n).toBe(0);
   });
@@ -198,7 +266,7 @@ describe("real PostgreSQL recurring CSV RPCs", () => {
     const first = await sync(connector.connectorId);
     const second = await sync(connector.connectorId, batch2);
     const snapshot = await asUser(owner, async (c) => (await c.query("select public.recurring_csv_snapshot($1) as result", [second.id])).rows[0].result);
-    await asUser(owner, (c) => c.query("select public.recurring_csv_analysis($1,$2,$3)", [second.id, snapshot.revision, JSON.stringify(runCoreCycle(snapshot.events))]));
+    await asServer(owner, (c) => c.query("select public.recurring_csv_analysis_server($4,$1,$2,$3)", [second.id, snapshot.revision, JSON.stringify(runCoreCycle(snapshot.events)), owner]));
     const superseded = await asUser(owner, async (c) => (await c.query("select public.recurring_csv_snapshot($1) as result", [first.id])).rows[0].result);
     expect(superseded.run.analysis_status).toBe("superseded");
     expect(superseded.events).toBeUndefined();
@@ -213,7 +281,7 @@ describe("real PostgreSQL recurring CSV RPCs", () => {
     await pool.query("update public.organization_members set role='admin' where user_id=$1", [analyst]);
     const connector = await asUser(analyst, (c) => create(c));
     const run = await asUser(analyst, (c) => start(c, connector.connectorId));
-    expect(await asUser(analyst, (c) => merge(c, run))).toMatchObject({ accepted_count: 100 });
+    expect(await asServer(analyst, (c) => merge(c, run, batch1, batch1.records, analyst))).toMatchObject({ accepted_count: 100 });
     await asUser(owner, async (c) => {
       const other = (await c.query("insert into public.organizations(name,slug,created_by) values('Account Bootstrap','bootstrap-test',$1) returning id", [owner])).rows[0].id;
       await c.query("insert into public.organization_members(organization_id,user_id,role) values($1,$2,'owner')", [other, owner]);

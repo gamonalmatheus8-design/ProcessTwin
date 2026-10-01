@@ -24,3 +24,7 @@ Não execute o baseline. Mantenha o histórico remoto atual e aplique somente mi
 O contrato cobre tabelas, colunas, defaults, constraints, índices, RLS, políticas, assinaturas/privilégios/configurações das funções, triggers e configuração do bucket. Não contém linhas de negócio, usuários ou objetos armazenados. Não é um backup de dados ou uma comparação dos corpos das funções; o comportamento dos RPCs é verificado pela suíte de integração.
 
 Ao mudar intencionalmente o schema, crie uma migração, valide-a no ambiente adequado e revise uma nova captura do contrato. Não atualize o snapshot apenas para silenciar uma divergência.
+
+## Evolução V1.5A.4
+
+O contrato JSON capturado acima corresponde à V1.5A.3, não ao banco com as RPCs de servidor. A suíte confere o contrato antes dessa nova migração e verifica suas diferenças com testes de permissões, concorrência e resultados live. Aplique também `20261001010815_recurring_csv_server_boundary.sql` em instalações novas e configure a credencial do servidor conforme `docs/SYNC_SECURITY_V1_5A_4.md`. Uma nova captura do remoto só deve ser registrada depois da aplicação e conferência efetivas.

@@ -1008,6 +1008,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      recurring_csv_analysis_server: {
+        Args: { p_actor: string; p_run: string; p_revision: number; p_result: Json }
+        Returns: Json
+      }
+      recurring_csv_merge_server: {
+        Args: { p_actor: string; p_run: string; p_events: Json; p_fetched: number; p_invalid: number; p_schema_hash: string; p_storage_path: string }
+        Returns: Json
+      }
       recurring_csv_analysis: {
         Args: { p_result: Json; p_revision: number; p_run: string }
         Returns: Json

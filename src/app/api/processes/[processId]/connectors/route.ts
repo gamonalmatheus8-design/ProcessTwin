@@ -4,6 +4,7 @@ import { parseCanonicalMapping, parseIdentityConfig, prepareRecurringCsv, SyncVa
 import { analyzeSyncRun, synchronizeRecurringCsv, syncMessage } from "@/features/sync/service";
 import type { FrozenMapping, SyncRun } from "@/features/sync/types";
 import { createClient } from "@/lib/supabase/server";
+import { createSyncWriter } from "@/lib/supabase/sync-writer";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -27,6 +28,9 @@ export async function POST(request: Request, context: { params: Promise<{ proces
     client.from("organization_members").select("role").eq("organization_id", process.organization_id).eq("user_id", user.id).maybeSingle(),
   ]);
   if (organization?.created_by !== user.id && !["owner", "admin"].includes(member?.role ?? "")) return fail("Owner/Admin pode configurar e sincronizar conectores.", 403);
+  let writer;
+  try { writer = createSyncWriter(user.id); }
+  catch { return fail("A sincronização está temporariamente indisponível. Tente novamente mais tarde.", 503); }
   let form: FormData;
   try { form = await request.formData(); } catch { return fail("Formulário inválido.", 400); }
   if (form.get("action") === "analysis") {
@@ -35,7 +39,7 @@ export async function POST(request: Request, context: { params: Promise<{ proces
     const { data: run } = await client.from("sync_runs").select("*").eq("id", runId).eq("process_id", processId).maybeSingle();
     if (!run) return fail("Sincronização não encontrada.", 404);
     try {
-      const result = await analyzeSyncRun(client, run as SyncRun);
+      const result = await analyzeSyncRun(client, run as SyncRun, writer);
       return NextResponse.json({ connectorId: result.connector_id, datasetId: result.dataset_id, run: result, message: syncMessage(result), analysisExecuted: result.analysis_status === "succeeded" });
     } catch { return fail("Não foi possível executar a análise. Os dados continuam salvos.", 500); }
   }
@@ -62,7 +66,7 @@ export async function POST(request: Request, context: { params: Promise<{ proces
     const { data: saved } = await client.from("connector_mappings").select("canonical_mapping,identity_config,source_schema_hash").eq("connector_id", connectorId).eq("active", true).eq("version", 1).single();
     if (!saved) return fail("Mapeamento do conector indisponível.", 409);
     const mapping: FrozenMapping = { canonical_mapping: parseCanonicalMapping(saved.canonical_mapping), identity_config: parseIdentityConfig(saved.identity_config), source_schema_hash: saved.source_schema_hash };
-    const result = await synchronizeRecurringCsv({ client, connectorId, file, mapping });
+    const result = await synchronizeRecurringCsv({ client, connectorId, file, mapping, writer });
     return NextResponse.json(result, { status: result.run.status === "failed" ? 422 : 200 });
   } catch (error) {
     return fail(error instanceof SyncValidationError ? error.message : "Não foi possível concluir a sincronização. Verifique o histórico antes de tentar novamente.", error instanceof SyncValidationError ? 422 : 500);
