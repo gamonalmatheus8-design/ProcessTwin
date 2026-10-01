@@ -5,6 +5,7 @@ on:
     branches:
       - v1.2-process-explorer
       - v1.5-connectors-sync
+      - v1.6-premium-frontend
   pull_request:
     branches:
       - main
