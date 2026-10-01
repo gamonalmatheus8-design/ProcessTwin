@@ -217,33 +217,58 @@ export function ProcessGraph({
               const highlighted = !selectedVariant || selectedEdges.has(key);
               const crossRow = responsive && source.y !== target.y;
               const leftward = responsive && target.x < source.x;
-              const sx = crossRow
-                ? source.x + source.width / 2
-                : leftward
-                  ? source.x
-                  : source.x + source.width;
-              const sy = crossRow
-                ? source.y + (target.y > source.y ? source.height : 0)
-                : source.y + source.height / 2;
-              const tx = crossRow
-                ? target.x + target.width / 2
-                : leftward
-                  ? target.x + target.width
-                  : target.x;
-              const ty = crossRow
-                ? target.y + (target.y < source.y ? target.height : 0)
-                : target.y + target.height / 2;
               const backward = responsive
                 ? layout.nodes.indexOf(target) <= layout.nodes.indexOf(source)
-                : tx <= sx;
+                : target.x <= source.x + source.width;
+              // Route returns outside the nodes so reciprocal DFG links stay distinct.
+              const sideReturn = crossRow && backward && source.x === target.x;
+              const topReturn = responsive && !crossRow && backward;
+              const sx = sideReturn
+                ? source.x + source.width
+                : topReturn || crossRow
+                  ? source.x + source.width / 2
+                  : leftward
+                    ? source.x
+                    : source.x + source.width;
+              const sy = sideReturn
+                ? source.y + source.height / 2
+                : topReturn
+                  ? source.y
+                  : crossRow
+                    ? source.y + (target.y > source.y ? source.height : 0)
+                    : source.y + source.height / 2;
+              const tx = sideReturn
+                ? target.x + target.width
+                : topReturn || crossRow
+                  ? target.x + target.width / 2
+                  : leftward
+                    ? target.x + target.width
+                    : target.x;
+              const ty = sideReturn
+                ? target.y + target.height / 2
+                : topReturn
+                  ? target.y
+                  : crossRow
+                    ? target.y + (target.y < source.y ? target.height : 0)
+                    : target.y + target.height / 2;
               const returnDirection = responsive && leftward ? -1 : 1;
-              const path = crossRow
-                ? `M ${sx} ${sy} C ${sx} ${(sy + ty) / 2} ${tx} ${(sy + ty) / 2} ${tx} ${ty}`
-                : backward
-                  ? `M ${sx} ${sy} C ${sx + 52 * returnDirection} ${Math.max(18, sy - 84)} ${tx - 52 * returnDirection} ${Math.max(18, ty - 84)} ${tx} ${ty}`
-                  : `M ${sx} ${sy} C ${sx + (tx - sx) / 2} ${sy} ${sx + (tx - sx) / 2} ${ty} ${tx} ${ty}`;
-              const labelX = (sx + tx) / 2 + (crossRow ? 44 : 0);
-              const labelY = (sy + ty) / 2 - (crossRow ? 0 : 9);
+              const railX = Math.min(layout.width - 12, Math.max(sx, tx) + 24);
+              const railY = Math.max(12, Math.min(sy, ty) - 30);
+              const path = sideReturn
+                ? `M ${sx} ${sy} C ${railX} ${sy} ${railX} ${ty} ${tx} ${ty}`
+                : topReturn
+                  ? `M ${sx} ${sy} C ${sx} ${railY} ${tx} ${railY} ${tx} ${ty}`
+                  : crossRow
+                    ? `M ${sx} ${sy} C ${sx} ${(sy + ty) / 2} ${tx} ${(sy + ty) / 2} ${tx} ${ty}`
+                    : backward
+                      ? `M ${sx} ${sy} C ${sx + 52 * returnDirection} ${Math.max(18, sy - 84)} ${tx - 52 * returnDirection} ${Math.max(18, ty - 84)} ${tx} ${ty}`
+                      : `M ${sx} ${sy} C ${sx + (tx - sx) / 2} ${sy} ${sx + (tx - sx) / 2} ${ty} ${tx} ${ty}`;
+              const labelX = sideReturn
+                ? (source.x + target.x + source.width) / 2 + 44
+                : (sx + tx) / 2 + (crossRow ? 44 : 0);
+              const labelY = topReturn
+                ? railY - 4
+                : (sy + ty) / 2 + (sideReturn ? 16 : crossRow ? 0 : -9);
               const strokeWidth = Math.max(
                 1.5,
                 Math.min(5, 1.5 + edge.count / 6),
