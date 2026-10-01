@@ -30,6 +30,13 @@ async function asServer<T>(actor: string, work: (client: PoolClient) => Promise<
     const result = await work(client); await client.query("commit"); return result;
   } catch (error) { await client.query("rollback"); throw error; } finally { client.release(); }
 }
+async function asServerRoleOnly<T>(work: (client: PoolClient) => Promise<T>) {
+  const client = await pool.connect();
+  try {
+    await client.query("begin"); await client.query("set local role service_role");
+    const result = await work(client); await client.query("commit"); return result;
+  } catch (error) { await client.query("rollback"); throw error; } finally { client.release(); }
+}
 let referenceContract: unknown;
 async function create(client: PoolClient, target = processId) {
   return (await client.query("select public.recurring_csv_create($1,'Test CSV','orders',$2::jsonb,$3::jsonb,$4) as result", [target, JSON.stringify(demoSyncMapping), JSON.stringify(demoSyncIdentity), batch1.schemaHash])).rows[0].result as { connectorId: string; datasetId: string };
@@ -84,6 +91,12 @@ describe("real PostgreSQL recurring CSV RPCs", () => {
     }
     expect((await pool.query("select count(*)::int as n from public.process_events")).rows[0].n).toBe(0);
     expect((await pool.query("select count(*)::int as n from public.analysis_runs")).rows[0].n).toBe(0);
+  });
+  it("trusted server authorization works from the PostgreSQL service_role without JWT claims", async () => {
+    const connector = await asUser(owner, c => create(c));
+    const run = await asUser(owner, c => start(c, connector.connectorId));
+    const merged = await asServerRoleOnly(c => merge(c, run, batch1, batch1.records, owner));
+    expect(merged.accepted_count).toBe(batch1.records.length);
   });
   it("direct live result writes cannot bypass RPC protection; snapshot results remain writable", async () => {
     const connector = await asUser(owner, c => create(c));
