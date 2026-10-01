@@ -258,14 +258,14 @@ export function ConnectorCenter({
                         disabled={busy || !["draft", "active"].includes(connector.status)}
                         onClick={() => void sheetsAction("sync", connector.id)}
                       >
-                        Sync now
+                        Sincronizar agora
                       </button>
                       <button
                         className="button secondary compact"
                         disabled={busy}
                         onClick={() => setSheetsSetup(connector.id)}
                       >
-                        Revisar
+                        Revisar / reconectar
                       </button>
                       {connector.status === "active" && (
                         <button
