@@ -17,8 +17,8 @@ export default function Home() {
           <Link className="button secondary" href="/auth">
             Entrar
           </Link>
-          <Link className="button secondary" href="/demo">
-            Ver demonstração
+          <Link className="button secondary" href="/demo/center">
+            Ver demonstrações
           </Link>
           <Link className="button secondary" href="/pilot">
             Planejar meu piloto

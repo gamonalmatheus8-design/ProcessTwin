@@ -414,3 +414,79 @@ th { color: var(--muted); }
   .auth-card { padding: 22px; }
   .auth-panel-footer { display: grid; justify-items: center; }
 }
+/* Fair demo: scoped to avoid changing authenticated product screens. */
+.fair-page { display: block; width: min(1280px, 100%); margin: 0 auto; padding: 32px 40px 56px; }
+.fair-topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-bottom: 24px; border-bottom: 1px solid var(--border); font-size: 14px; }
+.fair-topbar a:hover { color: var(--accent); }
+.fair-brand { font-size: 22px; font-weight: 700; letter-spacing: -.04em; }
+.fair-brand span { color: var(--accent); }
+.fair-hero { padding: 58px 0 26px; max-width: 850px; }
+.fair-hero h1 { font-size: clamp(38px, 5.2vw, 66px); line-height: 1.08; letter-spacing: -.045em; max-width: 760px; }
+.fair-hero > p:not(.fair-notice) { max-width: 720px; font-size: 18px; }
+.fair-notice { color: #bbe1db; background: rgba(110, 231, 255, .055); border-left: 3px solid var(--accent); padding: 12px 16px; font-size: 13px; line-height: 1.6; }
+.fair-selector { display: flex; gap: 6px; margin: 12px 0 24px; }
+.fair-selector button { border: 1px solid var(--border); color: var(--muted); background: var(--surface); border-radius: 8px; padding: 11px 20px; min-height: 44px; cursor: pointer; }
+.fair-selector button[aria-pressed=true] { background: var(--accent); color: #031017; border-color: var(--accent); font-weight: 700; }
+.fair-catalog { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.fair-scenario { display: flex; flex-direction: column; padding: 28px 24px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); min-width: 0; }
+.fair-scenario h2 { font-size: 26px; letter-spacing: -.03em; line-height: 1.15; margin: 8px 0; }
+.fair-scenario > p:not(.fair-small):not(.fair-organization) { min-height: 72px; font-size: 14px; }
+.fair-organization { font-size: 13px; margin: 14px 0 0; }
+.fair-card-stats { display: grid; gap: 12px; margin: 18px 0; padding: 18px 0; border-block: 1px solid var(--border); }
+.fair-card-stats div { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+.fair-page dt { color: var(--muted); font-size: 13px; }
+.fair-page dd { margin: 0; font-variant-numeric: tabular-nums; font-weight: 700; }
+.fair-scenario .button { margin-top: auto; text-align: center; }
+.fair-small { font-size: 13px; line-height: 1.65; }
+.fair-method { padding: 34px 0 0; margin-top: 30px; border-top: 1px solid var(--border); }
+.fair-method h2 { font-size: 24px; }
+.fair-journey-header { margin-top: 36px; }
+.fair-journey-header h1 { font-size: clamp(36px, 5vw, 56px); letter-spacing: -.04em; }
+.fair-scope { display: flex; flex-wrap: wrap; gap: 12px 24px; color: var(--muted); font-size: 13px; margin: 20px 0; }
+.fair-step-nav ol { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); list-style: none; gap: 8px; padding: 0; margin: 26px 0; }
+.fair-step-nav button { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 48px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); padding: 10px 12px; border-radius: 10px; cursor: pointer; }
+.fair-step-nav button span { color: var(--accent); font-size: 12px; }
+.fair-step-nav button[aria-current=step] { color: var(--text); border-color: var(--accent); }
+.fair-stage { padding: 30px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; min-width: 0; }
+.fair-stage > h2 { font-size: clamp(24px, 3vw, 34px); letter-spacing: -.03em; margin: 0 0 18px; }
+.fair-stage caption { text-align: left; color: var(--muted); padding: 12px 0; font-size: 12px; }
+.fair-stage th { color: var(--text); font-weight: 600; }
+.fair-data-header { display: flex; justify-content: space-between; gap: 20px; align-items: center; margin-top: 24px; color: var(--muted); font-size: 13px; }
+.fair-selection { padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; }
+.fair-bottleneck { padding: 24px; border: 1px solid #5d4741; border-radius: 12px; background: rgba(212, 147, 101, .06); }
+.fair-bottleneck h3 { font-size: 30px; margin: 10px 0; }
+.fair-evidence { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 22px 0; }
+.fair-evidence dd { margin-top: 10px; font-size: 26px; }
+.fair-simulation-form { display: grid; grid-template-columns: 1.2fr 1.2fr 1fr; gap: 24px; align-items: start; padding-block: 18px; }
+.fair-simulation-form input[type=range] { accent-color: var(--accent); padding: 0; height: 44px; }
+.fair-comparison { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; padding: 24px 0; }
+.fair-comparison article { padding: 20px; border: 1px solid var(--border); border-radius: 12px; min-width: 0; }
+.fair-comparison h3 { margin: 0 0 20px; font-size: 16px; }
+.fair-comparison dl { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0; }
+.fair-comparison dd { font-size: clamp(18px, 2vw, 25px); margin-top: 10px; }
+.fair-comparison dl div:last-child dd { color: var(--accent); }
+.fair-bars { display: grid; gap: 8px; padding-top: 8px; }
+.fair-bars i { display: block; min-height: 6px; border-radius: 2px; background: #56677f; }
+.fair-bars i:last-child { background: var(--accent); }
+.fair-impact { padding: 24px; background: rgba(110, 231, 255, .055); border: 1px solid #2c5158; border-radius: 12px; }
+.fair-impact h3 { font-size: clamp(24px, 3vw, 34px); max-width: 680px; }
+.fair-model-notice { border-top: 1px solid var(--border); padding-top: 20px; font-size: 13px; }
+.fair-pagination { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 24px; }
+.fair-pagination > span { color: var(--muted); font-size: 13px; }
+@media (max-width: 1000px) { .fair-catalog { grid-template-columns: 1fr 1fr; } .fair-comparison { gap: 12px; } .fair-simulation-form { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 700px) {
+  .fair-page { padding: 20px 16px 36px; }
+  .fair-hero { padding-top: 36px; }
+  .fair-catalog, .fair-comparison, .fair-simulation-form { grid-template-columns: 1fr; }
+  .fair-scenario > p:not(.fair-small):not(.fair-organization) { min-height: 0; }
+  .fair-stage { padding: 20px 16px; }
+  .fair-step-nav ol { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .fair-step-nav button { gap: 6px; padding: 10px 8px; font-size: 12px; }
+  .fair-evidence { grid-template-columns: 1fr; gap: 18px; }
+  .fair-evidence div { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+  .fair-evidence dd { margin: 0; font-size: 22px; }
+  .fair-topbar, .fair-data-header { align-items: start; flex-wrap: wrap; }
+  .fair-pagination { flex-wrap: wrap; }
+  .fair-pagination .button { flex: 1; }
+  .fair-pagination > span { order: -1; width: 100%; text-align: center; }
+}
