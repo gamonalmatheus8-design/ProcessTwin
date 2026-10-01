@@ -256,3 +256,35 @@ input,select,textarea{min-height:36px;border-radius:6px}
   .pt-preview-stats div:nth-child(-n+2){border-bottom:1px solid #eeeeee}
   .pt-home-nav-link{display:none}
 }
+
+
+/* Preserve guided-demo controls after moving demos into the application shell. */
+.pt-main .fair-journey .fair-topbar{
+  display:flex;
+  min-height:38px;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:18px;
+  padding:0 0 12px;
+  border-bottom:1px solid #e5e5e5;
+  font-size:12px;
+}
+.pt-main .fair-journey .fair-topbar>a{
+  color:#525252;
+}
+.pt-main .fair-journey .fair-topbar>a:hover{
+  color:#0a0a0a;
+}
+.pt-main .fair-journey .fair-topbar .button{
+  margin:0;
+}
+@media(max-width:700px){
+  .pt-main .fair-journey .fair-topbar{
+    align-items:stretch;
+    flex-direction:column;
+  }
+  .pt-main .fair-journey .fair-topbar .button{
+    width:100%;
+  }
+}
