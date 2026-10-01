@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AuthForm } from "@/features/auth/auth-form";
+import { safeAuthNext } from "@/features/auth/redirect";
 
 const ERROR_MESSAGES: Record<string, string> = {
   invalid_confirmation: "Link de confirmação inválido ou incompleto.",
@@ -11,7 +12,7 @@ const ERROR_MESSAGES: Record<string, string> = {
 export default async function AuthPage({
   searchParams,
 }: {
-  searchParams: Promise<{ mode?: string; error?: string }>;
+  searchParams: Promise<{ mode?: string; error?: string; next?: string }>;
 }) {
   const params = await searchParams;
   const initialMode = params.mode === "signup" ? "signup" : "login";
@@ -27,6 +28,7 @@ export default async function AuthPage({
         <AuthForm
           initialMode={initialMode}
           initialMessage={initialMessage}
+          nextPath={safeAuthNext(params.next)}
         />
         <Link className="text-link auth-demo-link" href="/demo">
           Ver demonstração sem conta →

@@ -99,6 +99,8 @@ Formato recomendado:
 
 ## Estado da validação
 
-- Security Advisor: sem findings.
+- V1.5A.3: Security Advisor sem novos findings; permanece o aviso anterior de proteção contra senhas vazadas desativada.
 - Foreign keys: indexadas.
 - Avisos remanescentes de performance: apenas unused_index, esperado enquanto o banco está vazio.
+
+A instalação em um projeto novo usa a [fundação capturada e o procedimento de reprodução](../supabase/baselines/README.md), seguida pelas migrações rastreadas. A V1.5A.3 também remove grants de manutenção das sessões de navegador; a reprodução estrutural e as permissões são verificadas em PostgreSQL descartável.

@@ -1,0 +1,3673 @@
+{
+  "bucket": {
+    "id": "process-datasets",
+    "limit": 10485760,
+    "public": false,
+    "mimeTypes": [
+      "text/csv",
+      "application/vnd.ms-excel",
+      "text/plain"
+    ]
+  },
+  "tables": [
+    {
+      "rls": true,
+      "name": "analysis_runs",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notNull": true
+        },
+        {
+          "name": "organization_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "process_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "dataset_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "default": "'pending'::text",
+          "notNull": true
+        },
+        {
+          "name": "engine_version",
+          "type": "text",
+          "default": "'v1'::text",
+          "notNull": true
+        },
+        {
+          "name": "started_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "completed_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "summary",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "notNull": true
+        },
+        {
+          "name": "error_message",
+          "type": "text",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "bottlenecks",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notNull": true
+        },
+        {
+          "name": "organization_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "process_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "analysis_run_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "activity",
+          "type": "text",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "rank",
+          "type": "integer",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "score",
+          "type": "numeric(5,2)",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "severity",
+          "type": "text",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "avg_wait_seconds",
+          "type": "bigint",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "affected_cases",
+          "type": "integer",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "sla_impact_pct",
+          "type": "numeric(7,3)",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "rework_rate_pct",
+          "type": "numeric(7,3)",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "evidence",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "notNull": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "connector_mappings",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notNull": true
+        },
+        {
+          "name": "organization_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "connector_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "version",
+          "type": "integer",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "source_schema_hash",
+          "type": "text",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "canonical_mapping",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "notNull": true
+        },
+        {
+          "name": "identity_config",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "notNull": true
+        },
+        {
+          "name": "active",
+          "type": "boolean",
+          "default": "true",
+          "notNull": true
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "connector_sync_state",
+      "columns": [
+        {
+          "name": "connector_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "organization_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "checkpoint",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "notNull": true
+        },
+        {
+          "name": "watermark",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "last_attempt_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "last_success_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "next_sync_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "consecutive_failures",
+          "type": "integer",
+          "default": "0",
+          "notNull": true
+        },
+        {
+          "name": "lease_owner",
+          "type": "text",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "lease_until",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "connectors",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notNull": true
+        },
+        {
+          "name": "organization_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "process_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "dataset_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "type",
+          "type": "text",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "name",
+          "type": "text",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "default": "'draft'::text",
+          "notNull": true
+        },
+        {
+          "name": "sync_mode",
+          "type": "text",
+          "default": "'manual'::text",
+          "notNull": true
+        },
+        {
+          "name": "schedule_minutes",
+          "type": "integer",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "process_pack_id",
+          "type": "text",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "configuration",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "notNull": true
+        },
+        {
+          "name": "credential_ref",
+          "type": "text",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "datasets",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notNull": true
+        },
+        {
+          "name": "organization_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "process_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "name",
+          "type": "text",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "source_type",
+          "type": "text",
+          "default": "'csv'::text",
+          "notNull": true
+        },
+        {
+          "name": "original_filename",
+          "type": "text",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "storage_path",
+          "type": "text",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "row_count",
+          "type": "integer",
+          "default": "0",
+          "notNull": true
+        },
+        {
+          "name": "case_count",
+          "type": "integer",
+          "default": "0",
+          "notNull": true
+        },
+        {
+          "name": "validation_status",
+          "type": "text",
+          "default": "'pending'::text",
+          "notNull": true
+        },
+        {
+          "name": "validation_errors",
+          "type": "jsonb",
+          "default": "'[]'::jsonb",
+          "notNull": true
+        },
+        {
+          "name": "column_mapping",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "notNull": true
+        },
+        {
+          "name": "uploaded_by",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        },
+        {
+          "name": "dataset_mode",
+          "type": "text",
+          "default": "'snapshot'::text",
+          "notNull": true
+        },
+        {
+          "name": "sync_revision",
+          "type": "bigint",
+          "default": "0",
+          "notNull": true
+        },
+        {
+          "name": "analyzed_revision",
+          "type": "bigint",
+          "default": "0",
+          "notNull": true
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "insights",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notNull": true
+        },
+        {
+          "name": "organization_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "process_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "analysis_run_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "simulation_run_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "insight_type",
+          "type": "text",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "summary",
+          "type": "text",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "evidence",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "notNull": true
+        },
+        {
+          "name": "confidence",
+          "type": "numeric(5,2)",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "organization_members",
+      "columns": [
+        {
+          "name": "organization_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "role",
+          "type": "text",
+          "default": "'viewer'::text",
+          "notNull": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "organizations",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notNull": true
+        },
+        {
+          "name": "name",
+          "type": "text",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "slug",
+          "type": "text",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "process_events",
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "organization_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "process_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "dataset_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "event_index",
+          "type": "integer",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "case_id",
+          "type": "text",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "activity",
+          "type": "text",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "event_time",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "resource",
+          "type": "text",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "lifecycle",
+          "type": "text",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "cost",
+          "type": "numeric(18,4)",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "notNull": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        },
+        {
+          "name": "connector_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "sync_run_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "source_event_key",
+          "type": "text",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "source_payload_hash",
+          "type": "text",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "source_updated_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "ingested_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "process_models",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notNull": true
+        },
+        {
+          "name": "organization_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "process_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "dataset_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "analysis_run_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "model_version",
+          "type": "text",
+          "default": "'v1'::text",
+          "notNull": true
+        },
+        {
+          "name": "graph",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "notNull": true
+        },
+        {
+          "name": "metrics",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "notNull": true
+        },
+        {
+          "name": "variants",
+          "type": "jsonb",
+          "default": "'[]'::jsonb",
+          "notNull": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "processes",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notNull": true
+        },
+        {
+          "name": "organization_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "name",
+          "type": "text",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "default": "'draft'::text",
+          "notNull": true
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "simulation_results",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notNull": true
+        },
+        {
+          "name": "organization_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "process_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "simulation_run_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "baseline_metrics",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "notNull": true
+        },
+        {
+          "name": "simulated_metrics",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "notNull": true
+        },
+        {
+          "name": "deltas",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "notNull": true
+        },
+        {
+          "name": "impact_summary",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "notNull": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "simulation_runs",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notNull": true
+        },
+        {
+          "name": "organization_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "process_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "scenario_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "default": "'pending'::text",
+          "notNull": true
+        },
+        {
+          "name": "iterations",
+          "type": "integer",
+          "default": "500",
+          "notNull": true
+        },
+        {
+          "name": "random_seed",
+          "type": "integer",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "started_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "completed_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "error_message",
+          "type": "text",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "simulation_scenarios",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notNull": true
+        },
+        {
+          "name": "organization_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "process_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "baseline_analysis_run_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "name",
+          "type": "text",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "config",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "notNull": true
+        },
+        {
+          "name": "created_by",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        }
+      ]
+    },
+    {
+      "rls": true,
+      "name": "sync_runs",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notNull": true
+        },
+        {
+          "name": "organization_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "process_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "connector_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "dataset_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "trigger",
+          "type": "text",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "default": "'queued'::text",
+          "notNull": true
+        },
+        {
+          "name": "checkpoint_before",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "notNull": true
+        },
+        {
+          "name": "checkpoint_after",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "notNull": true
+        },
+        {
+          "name": "started_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "completed_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "fetched_count",
+          "type": "integer",
+          "default": "0",
+          "notNull": true
+        },
+        {
+          "name": "accepted_count",
+          "type": "integer",
+          "default": "0",
+          "notNull": true
+        },
+        {
+          "name": "duplicate_count",
+          "type": "integer",
+          "default": "0",
+          "notNull": true
+        },
+        {
+          "name": "updated_count",
+          "type": "integer",
+          "default": "0",
+          "notNull": true
+        },
+        {
+          "name": "invalid_count",
+          "type": "integer",
+          "default": "0",
+          "notNull": true
+        },
+        {
+          "name": "page_count",
+          "type": "integer",
+          "default": "0",
+          "notNull": true
+        },
+        {
+          "name": "error_code",
+          "type": "text",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "error_message",
+          "type": "text",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        },
+        {
+          "name": "filename",
+          "type": "text",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "storage_path",
+          "type": "text",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "source_schema_hash",
+          "type": "text",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "mapping_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "analysis_status",
+          "type": "text",
+          "default": "'skipped'::text",
+          "notNull": true
+        },
+        {
+          "name": "analysis_run_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "dataset_revision",
+          "type": "bigint",
+          "default": null,
+          "notNull": false
+        }
+      ]
+    }
+  ],
+  "indexes": [
+    {
+      "name": "analysis_runs_created_by_idx",
+      "table": "analysis_runs",
+      "definition": "CREATE INDEX analysis_runs_created_by_idx ON public.analysis_runs USING btree (created_by)"
+    },
+    {
+      "name": "analysis_runs_dataset_org_idx",
+      "table": "analysis_runs",
+      "definition": "CREATE INDEX analysis_runs_dataset_org_idx ON public.analysis_runs USING btree (dataset_id, organization_id)"
+    },
+    {
+      "name": "analysis_runs_id_organization_id_key",
+      "table": "analysis_runs",
+      "definition": "CREATE UNIQUE INDEX analysis_runs_id_organization_id_key ON public.analysis_runs USING btree (id, organization_id)"
+    },
+    {
+      "name": "analysis_runs_pkey",
+      "table": "analysis_runs",
+      "definition": "CREATE UNIQUE INDEX analysis_runs_pkey ON public.analysis_runs USING btree (id)"
+    },
+    {
+      "name": "analysis_runs_process_idx",
+      "table": "analysis_runs",
+      "definition": "CREATE INDEX analysis_runs_process_idx ON public.analysis_runs USING btree (process_id, created_at DESC)"
+    },
+    {
+      "name": "analysis_runs_process_org_idx",
+      "table": "analysis_runs",
+      "definition": "CREATE INDEX analysis_runs_process_org_idx ON public.analysis_runs USING btree (process_id, organization_id)"
+    },
+    {
+      "name": "bottlenecks_analysis_idx",
+      "table": "bottlenecks",
+      "definition": "CREATE INDEX bottlenecks_analysis_idx ON public.bottlenecks USING btree (analysis_run_id, rank)"
+    },
+    {
+      "name": "bottlenecks_analysis_org_idx",
+      "table": "bottlenecks",
+      "definition": "CREATE INDEX bottlenecks_analysis_org_idx ON public.bottlenecks USING btree (analysis_run_id, organization_id)"
+    },
+    {
+      "name": "bottlenecks_analysis_run_id_rank_key",
+      "table": "bottlenecks",
+      "definition": "CREATE UNIQUE INDEX bottlenecks_analysis_run_id_rank_key ON public.bottlenecks USING btree (analysis_run_id, rank)"
+    },
+    {
+      "name": "bottlenecks_pkey",
+      "table": "bottlenecks",
+      "definition": "CREATE UNIQUE INDEX bottlenecks_pkey ON public.bottlenecks USING btree (id)"
+    },
+    {
+      "name": "bottlenecks_process_org_idx",
+      "table": "bottlenecks",
+      "definition": "CREATE INDEX bottlenecks_process_org_idx ON public.bottlenecks USING btree (process_id, organization_id)"
+    },
+    {
+      "name": "connector_mappings_connector_idx",
+      "table": "connector_mappings",
+      "definition": "CREATE INDEX connector_mappings_connector_idx ON public.connector_mappings USING btree (connector_id, version DESC)"
+    },
+    {
+      "name": "connector_mappings_connector_org_idx",
+      "table": "connector_mappings",
+      "definition": "CREATE INDEX connector_mappings_connector_org_idx ON public.connector_mappings USING btree (connector_id, organization_id)"
+    },
+    {
+      "name": "connector_mappings_connector_version_key",
+      "table": "connector_mappings",
+      "definition": "CREATE UNIQUE INDEX connector_mappings_connector_version_key ON public.connector_mappings USING btree (connector_id, version)"
+    },
+    {
+      "name": "connector_mappings_created_by_idx",
+      "table": "connector_mappings",
+      "definition": "CREATE INDEX connector_mappings_created_by_idx ON public.connector_mappings USING btree (created_by)"
+    },
+    {
+      "name": "connector_mappings_one_active_idx",
+      "table": "connector_mappings",
+      "definition": "CREATE UNIQUE INDEX connector_mappings_one_active_idx ON public.connector_mappings USING btree (connector_id) WHERE active"
+    },
+    {
+      "name": "connector_mappings_pkey",
+      "table": "connector_mappings",
+      "definition": "CREATE UNIQUE INDEX connector_mappings_pkey ON public.connector_mappings USING btree (id)"
+    },
+    {
+      "name": "connector_sync_state_connector_org_key",
+      "table": "connector_sync_state",
+      "definition": "CREATE UNIQUE INDEX connector_sync_state_connector_org_key ON public.connector_sync_state USING btree (connector_id, organization_id)"
+    },
+    {
+      "name": "connector_sync_state_pkey",
+      "table": "connector_sync_state",
+      "definition": "CREATE UNIQUE INDEX connector_sync_state_pkey ON public.connector_sync_state USING btree (connector_id)"
+    },
+    {
+      "name": "connectors_created_by_idx",
+      "table": "connectors",
+      "definition": "CREATE INDEX connectors_created_by_idx ON public.connectors USING btree (created_by)"
+    },
+    {
+      "name": "connectors_dataset_scope_idx",
+      "table": "connectors",
+      "definition": "CREATE INDEX connectors_dataset_scope_idx ON public.connectors USING btree (dataset_id, process_id, organization_id) WHERE (dataset_id IS NOT NULL)"
+    },
+    {
+      "name": "connectors_id_organization_id_key",
+      "table": "connectors",
+      "definition": "CREATE UNIQUE INDEX connectors_id_organization_id_key ON public.connectors USING btree (id, organization_id)"
+    },
+    {
+      "name": "connectors_id_process_dataset_org_key",
+      "table": "connectors",
+      "definition": "CREATE UNIQUE INDEX connectors_id_process_dataset_org_key ON public.connectors USING btree (id, process_id, dataset_id, organization_id)"
+    },
+    {
+      "name": "connectors_org_status_idx",
+      "table": "connectors",
+      "definition": "CREATE INDEX connectors_org_status_idx ON public.connectors USING btree (organization_id, status)"
+    },
+    {
+      "name": "connectors_pkey",
+      "table": "connectors",
+      "definition": "CREATE UNIQUE INDEX connectors_pkey ON public.connectors USING btree (id)"
+    },
+    {
+      "name": "connectors_process_idx",
+      "table": "connectors",
+      "definition": "CREATE INDEX connectors_process_idx ON public.connectors USING btree (process_id, created_at DESC)"
+    },
+    {
+      "name": "connectors_process_scope_idx",
+      "table": "connectors",
+      "definition": "CREATE INDEX connectors_process_scope_idx ON public.connectors USING btree (process_id, organization_id)"
+    },
+    {
+      "name": "datasets_id_organization_id_key",
+      "table": "datasets",
+      "definition": "CREATE UNIQUE INDEX datasets_id_organization_id_key ON public.datasets USING btree (id, organization_id)"
+    },
+    {
+      "name": "datasets_id_process_id_organization_id_key",
+      "table": "datasets",
+      "definition": "CREATE UNIQUE INDEX datasets_id_process_id_organization_id_key ON public.datasets USING btree (id, process_id, organization_id)"
+    },
+    {
+      "name": "datasets_one_live_per_process_idx",
+      "table": "datasets",
+      "definition": "CREATE UNIQUE INDEX datasets_one_live_per_process_idx ON public.datasets USING btree (process_id) WHERE (dataset_mode = 'live'::text)"
+    },
+    {
+      "name": "datasets_pkey",
+      "table": "datasets",
+      "definition": "CREATE UNIQUE INDEX datasets_pkey ON public.datasets USING btree (id)"
+    },
+    {
+      "name": "datasets_process_idx",
+      "table": "datasets",
+      "definition": "CREATE INDEX datasets_process_idx ON public.datasets USING btree (process_id, created_at DESC)"
+    },
+    {
+      "name": "datasets_process_org_idx",
+      "table": "datasets",
+      "definition": "CREATE INDEX datasets_process_org_idx ON public.datasets USING btree (process_id, organization_id)"
+    },
+    {
+      "name": "datasets_uploaded_by_idx",
+      "table": "datasets",
+      "definition": "CREATE INDEX datasets_uploaded_by_idx ON public.datasets USING btree (uploaded_by)"
+    },
+    {
+      "name": "insights_analysis_org_idx",
+      "table": "insights",
+      "definition": "CREATE INDEX insights_analysis_org_idx ON public.insights USING btree (analysis_run_id, organization_id)"
+    },
+    {
+      "name": "insights_pkey",
+      "table": "insights",
+      "definition": "CREATE UNIQUE INDEX insights_pkey ON public.insights USING btree (id)"
+    },
+    {
+      "name": "insights_process_idx",
+      "table": "insights",
+      "definition": "CREATE INDEX insights_process_idx ON public.insights USING btree (process_id, created_at DESC)"
+    },
+    {
+      "name": "insights_process_org_idx",
+      "table": "insights",
+      "definition": "CREATE INDEX insights_process_org_idx ON public.insights USING btree (process_id, organization_id)"
+    },
+    {
+      "name": "insights_simulation_org_idx",
+      "table": "insights",
+      "definition": "CREATE INDEX insights_simulation_org_idx ON public.insights USING btree (simulation_run_id, organization_id)"
+    },
+    {
+      "name": "organization_members_pkey",
+      "table": "organization_members",
+      "definition": "CREATE UNIQUE INDEX organization_members_pkey ON public.organization_members USING btree (organization_id, user_id)"
+    },
+    {
+      "name": "organization_members_user_idx",
+      "table": "organization_members",
+      "definition": "CREATE INDEX organization_members_user_idx ON public.organization_members USING btree (user_id)"
+    },
+    {
+      "name": "organizations_created_by_idx",
+      "table": "organizations",
+      "definition": "CREATE INDEX organizations_created_by_idx ON public.organizations USING btree (created_by)"
+    },
+    {
+      "name": "organizations_pkey",
+      "table": "organizations",
+      "definition": "CREATE UNIQUE INDEX organizations_pkey ON public.organizations USING btree (id)"
+    },
+    {
+      "name": "organizations_slug_key",
+      "table": "organizations",
+      "definition": "CREATE UNIQUE INDEX organizations_slug_key ON public.organizations USING btree (slug)"
+    },
+    {
+      "name": "process_events_connector_scope_idx",
+      "table": "process_events",
+      "definition": "CREATE INDEX process_events_connector_scope_idx ON public.process_events USING btree (connector_id, process_id, dataset_id, organization_id) WHERE (connector_id IS NOT NULL)"
+    },
+    {
+      "name": "process_events_connector_source_key_key",
+      "table": "process_events",
+      "definition": "CREATE UNIQUE INDEX process_events_connector_source_key_key ON public.process_events USING btree (connector_id, source_event_key)"
+    },
+    {
+      "name": "process_events_connector_time_idx",
+      "table": "process_events",
+      "definition": "CREATE INDEX process_events_connector_time_idx ON public.process_events USING btree (connector_id, event_time) WHERE (connector_id IS NOT NULL)"
+    },
+    {
+      "name": "process_events_dataset_case_time_idx",
+      "table": "process_events",
+      "definition": "CREATE INDEX process_events_dataset_case_time_idx ON public.process_events USING btree (dataset_id, case_id, event_time, event_index)"
+    },
+    {
+      "name": "process_events_dataset_id_event_index_key",
+      "table": "process_events",
+      "definition": "CREATE UNIQUE INDEX process_events_dataset_id_event_index_key ON public.process_events USING btree (dataset_id, event_index)"
+    },
+    {
+      "name": "process_events_dataset_org_idx",
+      "table": "process_events",
+      "definition": "CREATE INDEX process_events_dataset_org_idx ON public.process_events USING btree (dataset_id, organization_id)"
+    },
+    {
+      "name": "process_events_pkey",
+      "table": "process_events",
+      "definition": "CREATE UNIQUE INDEX process_events_pkey ON public.process_events USING btree (id)"
+    },
+    {
+      "name": "process_events_process_activity_idx",
+      "table": "process_events",
+      "definition": "CREATE INDEX process_events_process_activity_idx ON public.process_events USING btree (process_id, activity)"
+    },
+    {
+      "name": "process_events_process_org_idx",
+      "table": "process_events",
+      "definition": "CREATE INDEX process_events_process_org_idx ON public.process_events USING btree (process_id, organization_id)"
+    },
+    {
+      "name": "process_events_process_time_idx",
+      "table": "process_events",
+      "definition": "CREATE INDEX process_events_process_time_idx ON public.process_events USING btree (process_id, event_time)"
+    },
+    {
+      "name": "process_events_sync_run_idx",
+      "table": "process_events",
+      "definition": "CREATE INDEX process_events_sync_run_idx ON public.process_events USING btree (sync_run_id) WHERE (sync_run_id IS NOT NULL)"
+    },
+    {
+      "name": "process_events_sync_run_scope_idx",
+      "table": "process_events",
+      "definition": "CREATE INDEX process_events_sync_run_scope_idx ON public.process_events USING btree (sync_run_id, connector_id, process_id, dataset_id, organization_id) WHERE (sync_run_id IS NOT NULL)"
+    },
+    {
+      "name": "process_models_analysis_org_idx",
+      "table": "process_models",
+      "definition": "CREATE INDEX process_models_analysis_org_idx ON public.process_models USING btree (analysis_run_id, organization_id)"
+    },
+    {
+      "name": "process_models_analysis_run_id_key",
+      "table": "process_models",
+      "definition": "CREATE UNIQUE INDEX process_models_analysis_run_id_key ON public.process_models USING btree (analysis_run_id)"
+    },
+    {
+      "name": "process_models_dataset_org_idx",
+      "table": "process_models",
+      "definition": "CREATE INDEX process_models_dataset_org_idx ON public.process_models USING btree (dataset_id, organization_id)"
+    },
+    {
+      "name": "process_models_pkey",
+      "table": "process_models",
+      "definition": "CREATE UNIQUE INDEX process_models_pkey ON public.process_models USING btree (id)"
+    },
+    {
+      "name": "process_models_process_org_idx",
+      "table": "process_models",
+      "definition": "CREATE INDEX process_models_process_org_idx ON public.process_models USING btree (process_id, organization_id)"
+    },
+    {
+      "name": "processes_created_by_idx",
+      "table": "processes",
+      "definition": "CREATE INDEX processes_created_by_idx ON public.processes USING btree (created_by)"
+    },
+    {
+      "name": "processes_id_organization_id_key",
+      "table": "processes",
+      "definition": "CREATE UNIQUE INDEX processes_id_organization_id_key ON public.processes USING btree (id, organization_id)"
+    },
+    {
+      "name": "processes_org_idx",
+      "table": "processes",
+      "definition": "CREATE INDEX processes_org_idx ON public.processes USING btree (organization_id)"
+    },
+    {
+      "name": "processes_pkey",
+      "table": "processes",
+      "definition": "CREATE UNIQUE INDEX processes_pkey ON public.processes USING btree (id)"
+    },
+    {
+      "name": "simulation_results_pkey",
+      "table": "simulation_results",
+      "definition": "CREATE UNIQUE INDEX simulation_results_pkey ON public.simulation_results USING btree (id)"
+    },
+    {
+      "name": "simulation_results_process_org_idx",
+      "table": "simulation_results",
+      "definition": "CREATE INDEX simulation_results_process_org_idx ON public.simulation_results USING btree (process_id, organization_id)"
+    },
+    {
+      "name": "simulation_results_run_org_idx",
+      "table": "simulation_results",
+      "definition": "CREATE INDEX simulation_results_run_org_idx ON public.simulation_results USING btree (simulation_run_id, organization_id)"
+    },
+    {
+      "name": "simulation_results_simulation_run_id_key",
+      "table": "simulation_results",
+      "definition": "CREATE UNIQUE INDEX simulation_results_simulation_run_id_key ON public.simulation_results USING btree (simulation_run_id)"
+    },
+    {
+      "name": "simulation_runs_created_by_idx",
+      "table": "simulation_runs",
+      "definition": "CREATE INDEX simulation_runs_created_by_idx ON public.simulation_runs USING btree (created_by)"
+    },
+    {
+      "name": "simulation_runs_id_organization_id_key",
+      "table": "simulation_runs",
+      "definition": "CREATE UNIQUE INDEX simulation_runs_id_organization_id_key ON public.simulation_runs USING btree (id, organization_id)"
+    },
+    {
+      "name": "simulation_runs_pkey",
+      "table": "simulation_runs",
+      "definition": "CREATE UNIQUE INDEX simulation_runs_pkey ON public.simulation_runs USING btree (id)"
+    },
+    {
+      "name": "simulation_runs_process_org_idx",
+      "table": "simulation_runs",
+      "definition": "CREATE INDEX simulation_runs_process_org_idx ON public.simulation_runs USING btree (process_id, organization_id)"
+    },
+    {
+      "name": "simulation_runs_scenario_idx",
+      "table": "simulation_runs",
+      "definition": "CREATE INDEX simulation_runs_scenario_idx ON public.simulation_runs USING btree (scenario_id, created_at DESC)"
+    },
+    {
+      "name": "simulation_runs_scenario_org_idx",
+      "table": "simulation_runs",
+      "definition": "CREATE INDEX simulation_runs_scenario_org_idx ON public.simulation_runs USING btree (scenario_id, organization_id)"
+    },
+    {
+      "name": "simulation_scenarios_analysis_org_idx",
+      "table": "simulation_scenarios",
+      "definition": "CREATE INDEX simulation_scenarios_analysis_org_idx ON public.simulation_scenarios USING btree (baseline_analysis_run_id, organization_id)"
+    },
+    {
+      "name": "simulation_scenarios_created_by_idx",
+      "table": "simulation_scenarios",
+      "definition": "CREATE INDEX simulation_scenarios_created_by_idx ON public.simulation_scenarios USING btree (created_by)"
+    },
+    {
+      "name": "simulation_scenarios_id_organization_id_key",
+      "table": "simulation_scenarios",
+      "definition": "CREATE UNIQUE INDEX simulation_scenarios_id_organization_id_key ON public.simulation_scenarios USING btree (id, organization_id)"
+    },
+    {
+      "name": "simulation_scenarios_pkey",
+      "table": "simulation_scenarios",
+      "definition": "CREATE UNIQUE INDEX simulation_scenarios_pkey ON public.simulation_scenarios USING btree (id)"
+    },
+    {
+      "name": "simulation_scenarios_process_idx",
+      "table": "simulation_scenarios",
+      "definition": "CREATE INDEX simulation_scenarios_process_idx ON public.simulation_scenarios USING btree (process_id, created_at DESC)"
+    },
+    {
+      "name": "simulation_scenarios_process_org_idx",
+      "table": "simulation_scenarios",
+      "definition": "CREATE INDEX simulation_scenarios_process_org_idx ON public.simulation_scenarios USING btree (process_id, organization_id)"
+    },
+    {
+      "name": "sync_runs_connector_created_idx",
+      "table": "sync_runs",
+      "definition": "CREATE INDEX sync_runs_connector_created_idx ON public.sync_runs USING btree (connector_id, created_at DESC)"
+    },
+    {
+      "name": "sync_runs_connector_scope_idx",
+      "table": "sync_runs",
+      "definition": "CREATE INDEX sync_runs_connector_scope_idx ON public.sync_runs USING btree (connector_id, process_id, dataset_id, organization_id)"
+    },
+    {
+      "name": "sync_runs_id_organization_id_key",
+      "table": "sync_runs",
+      "definition": "CREATE UNIQUE INDEX sync_runs_id_organization_id_key ON public.sync_runs USING btree (id, organization_id)"
+    },
+    {
+      "name": "sync_runs_identity_scope_key",
+      "table": "sync_runs",
+      "definition": "CREATE UNIQUE INDEX sync_runs_identity_scope_key ON public.sync_runs USING btree (id, connector_id, process_id, dataset_id, organization_id)"
+    },
+    {
+      "name": "sync_runs_pkey",
+      "table": "sync_runs",
+      "definition": "CREATE UNIQUE INDEX sync_runs_pkey ON public.sync_runs USING btree (id)"
+    },
+    {
+      "name": "sync_runs_process_created_idx",
+      "table": "sync_runs",
+      "definition": "CREATE INDEX sync_runs_process_created_idx ON public.sync_runs USING btree (process_id, created_at DESC)"
+    }
+  ],
+  "policies": [
+    {
+      "name": "analysis_runs_delete",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "analysis_runs",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = analysis_runs.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text])))))))))",
+      "schema": "public",
+      "command": "DELETE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "analysis_runs_insert",
+      "check": "((created_by = ( SELECT auth.uid() AS uid)) AND (EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = analysis_runs.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text]))))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "analysis_runs",
+      "using": null,
+      "schema": "public",
+      "command": "INSERT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "analysis_runs_select",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "analysis_runs",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = analysis_runs.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)))))))))",
+      "schema": "public",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "analysis_runs_update",
+      "check": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = analysis_runs.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text])))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "analysis_runs",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = analysis_runs.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text])))))))))",
+      "schema": "public",
+      "command": "UPDATE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "bottlenecks_delete",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "bottlenecks",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = bottlenecks.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text])))))))))",
+      "schema": "public",
+      "command": "DELETE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "bottlenecks_insert",
+      "check": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = bottlenecks.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text])))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "bottlenecks",
+      "using": null,
+      "schema": "public",
+      "command": "INSERT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "bottlenecks_select",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "bottlenecks",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = bottlenecks.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)))))))))",
+      "schema": "public",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "bottlenecks_update",
+      "check": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = bottlenecks.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text])))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "bottlenecks",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = bottlenecks.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text])))))))))",
+      "schema": "public",
+      "command": "UPDATE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "connector_mappings_delete",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "connector_mappings",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = connector_mappings.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text])))))))))",
+      "schema": "public",
+      "command": "DELETE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "connector_mappings_insert",
+      "check": "((created_by = ( SELECT auth.uid() AS uid)) AND (EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = connector_mappings.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text]))))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "connector_mappings",
+      "using": null,
+      "schema": "public",
+      "command": "INSERT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "connector_mappings_select",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "connector_mappings",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = connector_mappings.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)))))))))",
+      "schema": "public",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "connector_mappings_update",
+      "check": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = connector_mappings.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text])))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "connector_mappings",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = connector_mappings.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text])))))))))",
+      "schema": "public",
+      "command": "UPDATE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "connector_sync_state_deny_authenticated",
+      "check": "false",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "connector_sync_state",
+      "using": "false",
+      "schema": "public",
+      "command": "ALL",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "connectors_delete",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "connectors",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = connectors.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text])))))))))",
+      "schema": "public",
+      "command": "DELETE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "connectors_insert",
+      "check": "((created_by = ( SELECT auth.uid() AS uid)) AND (EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = connectors.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text]))))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "connectors",
+      "using": null,
+      "schema": "public",
+      "command": "INSERT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "connectors_select",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "connectors",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = connectors.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)))))))))",
+      "schema": "public",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "connectors_update",
+      "check": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = connectors.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text])))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "connectors",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = connectors.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text])))))))))",
+      "schema": "public",
+      "command": "UPDATE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "datasets_delete",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "datasets",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = datasets.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text])))))))))",
+      "schema": "public",
+      "command": "DELETE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "datasets_insert",
+      "check": "((uploaded_by = ( SELECT auth.uid() AS uid)) AND (EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = datasets.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text]))))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "datasets",
+      "using": null,
+      "schema": "public",
+      "command": "INSERT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "datasets_live_delete_guard",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "datasets",
+      "using": "(dataset_mode = 'snapshot'::text)",
+      "schema": "public",
+      "command": "DELETE",
+      "permissive": "RESTRICTIVE"
+    },
+    {
+      "name": "datasets_live_insert_guard",
+      "check": "(dataset_mode = 'snapshot'::text)",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "datasets",
+      "using": null,
+      "schema": "public",
+      "command": "INSERT",
+      "permissive": "RESTRICTIVE"
+    },
+    {
+      "name": "datasets_live_update_guard",
+      "check": "(dataset_mode = 'snapshot'::text)",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "datasets",
+      "using": "(dataset_mode = 'snapshot'::text)",
+      "schema": "public",
+      "command": "UPDATE",
+      "permissive": "RESTRICTIVE"
+    },
+    {
+      "name": "datasets_select",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "datasets",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = datasets.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)))))))))",
+      "schema": "public",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "datasets_update",
+      "check": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = datasets.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text])))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "datasets",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = datasets.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text])))))))))",
+      "schema": "public",
+      "command": "UPDATE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "insights_delete",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "insights",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = insights.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text])))))))))",
+      "schema": "public",
+      "command": "DELETE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "insights_insert",
+      "check": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = insights.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text])))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "insights",
+      "using": null,
+      "schema": "public",
+      "command": "INSERT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "insights_select",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "insights",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = insights.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)))))))))",
+      "schema": "public",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "insights_update",
+      "check": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = insights.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text])))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "insights",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = insights.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text])))))))))",
+      "schema": "public",
+      "command": "UPDATE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "organization_members_delete",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "organization_members",
+      "using": "private.owns_organization(organization_id)",
+      "schema": "public",
+      "command": "DELETE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "organization_members_insert",
+      "check": "private.owns_organization(organization_id)",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "organization_members",
+      "using": null,
+      "schema": "public",
+      "command": "INSERT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "organization_members_select",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "organization_members",
+      "using": "((user_id = ( SELECT auth.uid() AS uid)) OR private.owns_organization(organization_id))",
+      "schema": "public",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "organization_members_update",
+      "check": "private.owns_organization(organization_id)",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "organization_members",
+      "using": "private.owns_organization(organization_id)",
+      "schema": "public",
+      "command": "UPDATE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "organizations_delete",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "organizations",
+      "using": "(created_by = ( SELECT auth.uid() AS uid))",
+      "schema": "public",
+      "command": "DELETE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "organizations_insert",
+      "check": "(created_by = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "organizations",
+      "using": null,
+      "schema": "public",
+      "command": "INSERT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "organizations_select",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "organizations",
+      "using": "((created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n   FROM organization_members m\n  WHERE ((m.organization_id = organizations.id) AND (m.user_id = ( SELECT auth.uid() AS uid))))))",
+      "schema": "public",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "organizations_update",
+      "check": "(created_by = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "organizations",
+      "using": "(created_by = ( SELECT auth.uid() AS uid))",
+      "schema": "public",
+      "command": "UPDATE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "process_events_delete",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "process_events",
+      "using": "((connector_id IS NULL) AND (EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = process_events.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text]))))))))))",
+      "schema": "public",
+      "command": "DELETE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "process_events_insert",
+      "check": "((connector_id IS NULL) AND (EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = process_events.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text]))))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "process_events",
+      "using": null,
+      "schema": "public",
+      "command": "INSERT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "process_events_live_delete_guard",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "process_events",
+      "using": "(EXISTS ( SELECT 1\n   FROM datasets d\n  WHERE ((d.id = process_events.dataset_id) AND (d.organization_id = process_events.organization_id) AND (d.dataset_mode = 'snapshot'::text))))",
+      "schema": "public",
+      "command": "DELETE",
+      "permissive": "RESTRICTIVE"
+    },
+    {
+      "name": "process_events_live_insert_guard",
+      "check": "(EXISTS ( SELECT 1\n   FROM datasets d\n  WHERE ((d.id = process_events.dataset_id) AND (d.organization_id = process_events.organization_id) AND (d.dataset_mode = 'snapshot'::text))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "process_events",
+      "using": null,
+      "schema": "public",
+      "command": "INSERT",
+      "permissive": "RESTRICTIVE"
+    },
+    {
+      "name": "process_events_live_update_guard",
+      "check": "(EXISTS ( SELECT 1\n   FROM datasets d\n  WHERE ((d.id = process_events.dataset_id) AND (d.organization_id = process_events.organization_id) AND (d.dataset_mode = 'snapshot'::text))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "process_events",
+      "using": "(EXISTS ( SELECT 1\n   FROM datasets d\n  WHERE ((d.id = process_events.dataset_id) AND (d.organization_id = process_events.organization_id) AND (d.dataset_mode = 'snapshot'::text))))",
+      "schema": "public",
+      "command": "UPDATE",
+      "permissive": "RESTRICTIVE"
+    },
+    {
+      "name": "process_events_select",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "process_events",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = process_events.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)))))))))",
+      "schema": "public",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "process_events_update",
+      "check": "((connector_id IS NULL) AND (EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = process_events.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text]))))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "process_events",
+      "using": "((connector_id IS NULL) AND (EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = process_events.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text]))))))))))",
+      "schema": "public",
+      "command": "UPDATE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "process_models_delete",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "process_models",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = process_models.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text])))))))))",
+      "schema": "public",
+      "command": "DELETE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "process_models_insert",
+      "check": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = process_models.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text])))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "process_models",
+      "using": null,
+      "schema": "public",
+      "command": "INSERT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "process_models_select",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "process_models",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = process_models.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)))))))))",
+      "schema": "public",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "process_models_update",
+      "check": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = process_models.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text])))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "process_models",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = process_models.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text])))))))))",
+      "schema": "public",
+      "command": "UPDATE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "processes_delete",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "processes",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = processes.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text])))))))))",
+      "schema": "public",
+      "command": "DELETE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "processes_insert",
+      "check": "((created_by = ( SELECT auth.uid() AS uid)) AND (EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = processes.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text]))))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "processes",
+      "using": null,
+      "schema": "public",
+      "command": "INSERT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "processes_select",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "processes",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = processes.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)))))))))",
+      "schema": "public",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "processes_update",
+      "check": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = processes.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text])))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "processes",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = processes.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text])))))))))",
+      "schema": "public",
+      "command": "UPDATE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "simulation_results_delete",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "simulation_results",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = simulation_results.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text])))))))))",
+      "schema": "public",
+      "command": "DELETE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "simulation_results_insert",
+      "check": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = simulation_results.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text])))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "simulation_results",
+      "using": null,
+      "schema": "public",
+      "command": "INSERT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "simulation_results_select",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "simulation_results",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = simulation_results.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)))))))))",
+      "schema": "public",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "simulation_results_update",
+      "check": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = simulation_results.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text])))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "simulation_results",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = simulation_results.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text])))))))))",
+      "schema": "public",
+      "command": "UPDATE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "simulation_runs_delete",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "simulation_runs",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = simulation_runs.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text])))))))))",
+      "schema": "public",
+      "command": "DELETE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "simulation_runs_insert",
+      "check": "((created_by = ( SELECT auth.uid() AS uid)) AND (EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = simulation_runs.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text]))))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "simulation_runs",
+      "using": null,
+      "schema": "public",
+      "command": "INSERT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "simulation_runs_select",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "simulation_runs",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = simulation_runs.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)))))))))",
+      "schema": "public",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "simulation_runs_update",
+      "check": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = simulation_runs.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text])))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "simulation_runs",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = simulation_runs.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text])))))))))",
+      "schema": "public",
+      "command": "UPDATE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "simulation_scenarios_delete",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "simulation_scenarios",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = simulation_scenarios.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text])))))))))",
+      "schema": "public",
+      "command": "DELETE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "simulation_scenarios_insert",
+      "check": "((created_by = ( SELECT auth.uid() AS uid)) AND (EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = simulation_scenarios.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text]))))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "simulation_scenarios",
+      "using": null,
+      "schema": "public",
+      "command": "INSERT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "simulation_scenarios_select",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "simulation_scenarios",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = simulation_scenarios.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)))))))))",
+      "schema": "public",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "simulation_scenarios_update",
+      "check": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = simulation_scenarios.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text])))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "simulation_scenarios",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = simulation_scenarios.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)) AND (m.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text])))))))))",
+      "schema": "public",
+      "command": "UPDATE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "sync_runs_select",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "sync_runs",
+      "using": "(EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE ((o.id = sync_runs.organization_id) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members m\n          WHERE ((m.organization_id = o.id) AND (m.user_id = ( SELECT auth.uid() AS uid)))))))))",
+      "schema": "public",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "process_datasets_storage_delete",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "objects",
+      "using": "((bucket_id = 'process-datasets'::text) AND (EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE (((o.id)::text = (storage.foldername(objects.name))[1]) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members om\n          WHERE ((om.organization_id = o.id) AND (om.user_id = ( SELECT auth.uid() AS uid)) AND (om.role = ANY (ARRAY['owner'::text, 'admin'::text]))))))))))",
+      "schema": "storage",
+      "command": "DELETE",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "process_datasets_storage_insert",
+      "check": "((bucket_id = 'process-datasets'::text) AND (EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE (((o.id)::text = (storage.foldername(objects.name))[1]) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members om\n          WHERE ((om.organization_id = o.id) AND (om.user_id = ( SELECT auth.uid() AS uid)) AND (om.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text]))))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "objects",
+      "using": null,
+      "schema": "storage",
+      "command": "INSERT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "process_datasets_storage_select",
+      "check": null,
+      "roles": [
+        "authenticated"
+      ],
+      "table": "objects",
+      "using": "((bucket_id = 'process-datasets'::text) AND (EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE (((o.id)::text = (storage.foldername(objects.name))[1]) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members om\n          WHERE ((om.organization_id = o.id) AND (om.user_id = ( SELECT auth.uid() AS uid))))))))))",
+      "schema": "storage",
+      "command": "SELECT",
+      "permissive": "PERMISSIVE"
+    },
+    {
+      "name": "process_datasets_storage_update",
+      "check": "((bucket_id = 'process-datasets'::text) AND (EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE (((o.id)::text = (storage.foldername(objects.name))[1]) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members om\n          WHERE ((om.organization_id = o.id) AND (om.user_id = ( SELECT auth.uid() AS uid)) AND (om.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text]))))))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "table": "objects",
+      "using": "((bucket_id = 'process-datasets'::text) AND (EXISTS ( SELECT 1\n   FROM organizations o\n  WHERE (((o.id)::text = (storage.foldername(objects.name))[1]) AND ((o.created_by = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n           FROM organization_members om\n          WHERE ((om.organization_id = o.id) AND (om.user_id = ( SELECT auth.uid() AS uid)) AND (om.role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text]))))))))))",
+      "schema": "storage",
+      "command": "UPDATE",
+      "permissive": "PERMISSIVE"
+    }
+  ],
+  "triggers": [
+    {
+      "name": "recurring_csv_batch_consistency",
+      "definition": "CREATE TRIGGER recurring_csv_batch_consistency BEFORE INSERT OR UPDATE ON public.process_events FOR EACH ROW EXECUTE FUNCTION private.recurring_csv_batch_guard()"
+    },
+    {
+      "name": "recurring_csv_mapping_frozen",
+      "definition": "CREATE TRIGGER recurring_csv_mapping_frozen BEFORE DELETE OR UPDATE ON public.connector_mappings FOR EACH ROW EXECUTE FUNCTION private.recurring_csv_mapping_guard()"
+    },
+    {
+      "name": "recurring_csv_scope_frozen",
+      "definition": "CREATE TRIGGER recurring_csv_scope_frozen BEFORE UPDATE ON public.connectors FOR EACH ROW EXECUTE FUNCTION private.recurring_csv_scope_guard()"
+    }
+  ],
+  "functions": [
+    {
+      "anon": false,
+      "args": "p_organization uuid",
+      "name": "owns_organization",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "private",
+      "definer": true,
+      "authenticated": true
+    },
+    {
+      "anon": false,
+      "args": "p_run uuid, p_revision bigint, p_result jsonb",
+      "name": "recurring_csv_analysis",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "private",
+      "definer": true,
+      "authenticated": true
+    },
+    {
+      "anon": false,
+      "args": "",
+      "name": "recurring_csv_batch_guard",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "private",
+      "definer": false,
+      "authenticated": false
+    },
+    {
+      "anon": false,
+      "args": "p_process uuid, p_name text, p_pack text, p_mapping jsonb, p_identity jsonb, p_schema_hash text",
+      "name": "recurring_csv_create",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "private",
+      "definer": true,
+      "authenticated": true
+    },
+    {
+      "anon": false,
+      "args": "p_run uuid, p_code text, p_fetched integer, p_invalid integer",
+      "name": "recurring_csv_fail",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "private",
+      "definer": true,
+      "authenticated": true
+    },
+    {
+      "anon": false,
+      "args": "",
+      "name": "recurring_csv_mapping_guard",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "private",
+      "definer": true,
+      "authenticated": false
+    },
+    {
+      "anon": false,
+      "args": "p_run uuid, p_events jsonb, p_fetched integer, p_invalid integer, p_schema_hash text, p_storage_path text",
+      "name": "recurring_csv_merge",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "private",
+      "definer": true,
+      "authenticated": true
+    },
+    {
+      "anon": false,
+      "args": "",
+      "name": "recurring_csv_scope_guard",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "private",
+      "definer": false,
+      "authenticated": false
+    },
+    {
+      "anon": false,
+      "args": "p_run uuid",
+      "name": "recurring_csv_snapshot",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "private",
+      "definer": true,
+      "authenticated": true
+    },
+    {
+      "anon": false,
+      "args": "p_connector uuid, p_filename text",
+      "name": "recurring_csv_start",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "private",
+      "definer": true,
+      "authenticated": true
+    },
+    {
+      "anon": false,
+      "args": "p_process uuid",
+      "name": "sync_authorize",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "private",
+      "definer": true,
+      "authenticated": false
+    },
+    {
+      "anon": false,
+      "args": "p_run uuid, p_revision bigint, p_result jsonb",
+      "name": "recurring_csv_analysis",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": false,
+      "authenticated": true
+    },
+    {
+      "anon": false,
+      "args": "p_process uuid, p_name text, p_pack text, p_mapping jsonb, p_identity jsonb, p_schema_hash text",
+      "name": "recurring_csv_create",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": false,
+      "authenticated": true
+    },
+    {
+      "anon": false,
+      "args": "p_run uuid, p_code text, p_fetched integer, p_invalid integer",
+      "name": "recurring_csv_fail",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": false,
+      "authenticated": true
+    },
+    {
+      "anon": false,
+      "args": "p_run uuid, p_events jsonb, p_fetched integer, p_invalid integer, p_schema_hash text, p_storage_path text",
+      "name": "recurring_csv_merge",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": false,
+      "authenticated": true
+    },
+    {
+      "anon": false,
+      "args": "p_run uuid",
+      "name": "recurring_csv_snapshot",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": false,
+      "authenticated": true
+    },
+    {
+      "anon": false,
+      "args": "p_connector uuid, p_filename text",
+      "name": "recurring_csv_start",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "definer": false,
+      "authenticated": true
+    }
+  ],
+  "privileges": [
+    {
+      "role": "authenticated",
+      "table": "analysis_runs",
+      "privilege": "DELETE"
+    },
+    {
+      "role": "authenticated",
+      "table": "analysis_runs",
+      "privilege": "INSERT"
+    },
+    {
+      "role": "authenticated",
+      "table": "analysis_runs",
+      "privilege": "SELECT"
+    },
+    {
+      "role": "authenticated",
+      "table": "analysis_runs",
+      "privilege": "UPDATE"
+    },
+    {
+      "role": "authenticated",
+      "table": "bottlenecks",
+      "privilege": "DELETE"
+    },
+    {
+      "role": "authenticated",
+      "table": "bottlenecks",
+      "privilege": "INSERT"
+    },
+    {
+      "role": "authenticated",
+      "table": "bottlenecks",
+      "privilege": "SELECT"
+    },
+    {
+      "role": "authenticated",
+      "table": "bottlenecks",
+      "privilege": "UPDATE"
+    },
+    {
+      "role": "authenticated",
+      "table": "connector_mappings",
+      "privilege": "DELETE"
+    },
+    {
+      "role": "authenticated",
+      "table": "connector_mappings",
+      "privilege": "INSERT"
+    },
+    {
+      "role": "authenticated",
+      "table": "connector_mappings",
+      "privilege": "SELECT"
+    },
+    {
+      "role": "authenticated",
+      "table": "connector_mappings",
+      "privilege": "UPDATE"
+    },
+    {
+      "role": "authenticated",
+      "table": "connectors",
+      "privilege": "DELETE"
+    },
+    {
+      "role": "authenticated",
+      "table": "connectors",
+      "privilege": "INSERT"
+    },
+    {
+      "role": "authenticated",
+      "table": "connectors",
+      "privilege": "SELECT"
+    },
+    {
+      "role": "authenticated",
+      "table": "connectors",
+      "privilege": "UPDATE"
+    },
+    {
+      "role": "authenticated",
+      "table": "datasets",
+      "privilege": "DELETE"
+    },
+    {
+      "role": "authenticated",
+      "table": "datasets",
+      "privilege": "INSERT"
+    },
+    {
+      "role": "authenticated",
+      "table": "datasets",
+      "privilege": "SELECT"
+    },
+    {
+      "role": "authenticated",
+      "table": "datasets",
+      "privilege": "UPDATE"
+    },
+    {
+      "role": "authenticated",
+      "table": "insights",
+      "privilege": "DELETE"
+    },
+    {
+      "role": "authenticated",
+      "table": "insights",
+      "privilege": "INSERT"
+    },
+    {
+      "role": "authenticated",
+      "table": "insights",
+      "privilege": "SELECT"
+    },
+    {
+      "role": "authenticated",
+      "table": "insights",
+      "privilege": "UPDATE"
+    },
+    {
+      "role": "authenticated",
+      "table": "organization_members",
+      "privilege": "DELETE"
+    },
+    {
+      "role": "authenticated",
+      "table": "organization_members",
+      "privilege": "INSERT"
+    },
+    {
+      "role": "authenticated",
+      "table": "organization_members",
+      "privilege": "SELECT"
+    },
+    {
+      "role": "authenticated",
+      "table": "organization_members",
+      "privilege": "UPDATE"
+    },
+    {
+      "role": "authenticated",
+      "table": "organizations",
+      "privilege": "DELETE"
+    },
+    {
+      "role": "authenticated",
+      "table": "organizations",
+      "privilege": "INSERT"
+    },
+    {
+      "role": "authenticated",
+      "table": "organizations",
+      "privilege": "SELECT"
+    },
+    {
+      "role": "authenticated",
+      "table": "organizations",
+      "privilege": "UPDATE"
+    },
+    {
+      "role": "authenticated",
+      "table": "process_events",
+      "privilege": "DELETE"
+    },
+    {
+      "role": "authenticated",
+      "table": "process_events",
+      "privilege": "INSERT"
+    },
+    {
+      "role": "authenticated",
+      "table": "process_events",
+      "privilege": "SELECT"
+    },
+    {
+      "role": "authenticated",
+      "table": "process_events",
+      "privilege": "UPDATE"
+    },
+    {
+      "role": "authenticated",
+      "table": "process_models",
+      "privilege": "DELETE"
+    },
+    {
+      "role": "authenticated",
+      "table": "process_models",
+      "privilege": "INSERT"
+    },
+    {
+      "role": "authenticated",
+      "table": "process_models",
+      "privilege": "SELECT"
+    },
+    {
+      "role": "authenticated",
+      "table": "process_models",
+      "privilege": "UPDATE"
+    },
+    {
+      "role": "authenticated",
+      "table": "processes",
+      "privilege": "DELETE"
+    },
+    {
+      "role": "authenticated",
+      "table": "processes",
+      "privilege": "INSERT"
+    },
+    {
+      "role": "authenticated",
+      "table": "processes",
+      "privilege": "SELECT"
+    },
+    {
+      "role": "authenticated",
+      "table": "processes",
+      "privilege": "UPDATE"
+    },
+    {
+      "role": "authenticated",
+      "table": "simulation_results",
+      "privilege": "DELETE"
+    },
+    {
+      "role": "authenticated",
+      "table": "simulation_results",
+      "privilege": "INSERT"
+    },
+    {
+      "role": "authenticated",
+      "table": "simulation_results",
+      "privilege": "SELECT"
+    },
+    {
+      "role": "authenticated",
+      "table": "simulation_results",
+      "privilege": "UPDATE"
+    },
+    {
+      "role": "authenticated",
+      "table": "simulation_runs",
+      "privilege": "DELETE"
+    },
+    {
+      "role": "authenticated",
+      "table": "simulation_runs",
+      "privilege": "INSERT"
+    },
+    {
+      "role": "authenticated",
+      "table": "simulation_runs",
+      "privilege": "SELECT"
+    },
+    {
+      "role": "authenticated",
+      "table": "simulation_runs",
+      "privilege": "UPDATE"
+    },
+    {
+      "role": "authenticated",
+      "table": "simulation_scenarios",
+      "privilege": "DELETE"
+    },
+    {
+      "role": "authenticated",
+      "table": "simulation_scenarios",
+      "privilege": "INSERT"
+    },
+    {
+      "role": "authenticated",
+      "table": "simulation_scenarios",
+      "privilege": "SELECT"
+    },
+    {
+      "role": "authenticated",
+      "table": "simulation_scenarios",
+      "privilege": "UPDATE"
+    },
+    {
+      "role": "authenticated",
+      "table": "sync_runs",
+      "privilege": "SELECT"
+    }
+  ],
+  "constraints": [
+    {
+      "name": "analysis_runs_check",
+      "table": "analysis_runs",
+      "definition": "CHECK (((completed_at IS NULL) OR (started_at IS NULL) OR (completed_at >= started_at)))"
+    },
+    {
+      "name": "analysis_runs_created_by_fkey",
+      "table": "analysis_runs",
+      "definition": "FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE RESTRICT"
+    },
+    {
+      "name": "analysis_runs_dataset_id_organization_id_fkey",
+      "table": "analysis_runs",
+      "definition": "FOREIGN KEY (dataset_id, organization_id) REFERENCES datasets(id, organization_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "analysis_runs_id_organization_id_key",
+      "table": "analysis_runs",
+      "definition": "UNIQUE (id, organization_id)"
+    },
+    {
+      "name": "analysis_runs_pkey",
+      "table": "analysis_runs",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "analysis_runs_process_id_organization_id_fkey",
+      "table": "analysis_runs",
+      "definition": "FOREIGN KEY (process_id, organization_id) REFERENCES processes(id, organization_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "analysis_runs_status_check",
+      "table": "analysis_runs",
+      "definition": "CHECK ((status = ANY (ARRAY['pending'::text, 'running'::text, 'completed'::text, 'failed'::text])))"
+    },
+    {
+      "name": "bottlenecks_affected_cases_check",
+      "table": "bottlenecks",
+      "definition": "CHECK (((affected_cases IS NULL) OR (affected_cases >= 0)))"
+    },
+    {
+      "name": "bottlenecks_analysis_run_id_organization_id_fkey",
+      "table": "bottlenecks",
+      "definition": "FOREIGN KEY (analysis_run_id, organization_id) REFERENCES analysis_runs(id, organization_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "bottlenecks_analysis_run_id_rank_key",
+      "table": "bottlenecks",
+      "definition": "UNIQUE (analysis_run_id, rank)"
+    },
+    {
+      "name": "bottlenecks_avg_wait_seconds_check",
+      "table": "bottlenecks",
+      "definition": "CHECK (((avg_wait_seconds IS NULL) OR (avg_wait_seconds >= 0)))"
+    },
+    {
+      "name": "bottlenecks_pkey",
+      "table": "bottlenecks",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "bottlenecks_process_id_organization_id_fkey",
+      "table": "bottlenecks",
+      "definition": "FOREIGN KEY (process_id, organization_id) REFERENCES processes(id, organization_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "bottlenecks_rank_check",
+      "table": "bottlenecks",
+      "definition": "CHECK ((rank > 0))"
+    },
+    {
+      "name": "bottlenecks_score_check",
+      "table": "bottlenecks",
+      "definition": "CHECK (((score >= (0)::numeric) AND (score <= (100)::numeric)))"
+    },
+    {
+      "name": "bottlenecks_severity_check",
+      "table": "bottlenecks",
+      "definition": "CHECK ((severity = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text, 'critical'::text])))"
+    },
+    {
+      "name": "connector_mappings_canonical_mapping_object_check",
+      "table": "connector_mappings",
+      "definition": "CHECK ((jsonb_typeof(canonical_mapping) = 'object'::text))"
+    },
+    {
+      "name": "connector_mappings_connector_scope_fkey",
+      "table": "connector_mappings",
+      "definition": "FOREIGN KEY (connector_id, organization_id) REFERENCES connectors(id, organization_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "connector_mappings_connector_version_key",
+      "table": "connector_mappings",
+      "definition": "UNIQUE (connector_id, version)"
+    },
+    {
+      "name": "connector_mappings_created_by_fkey",
+      "table": "connector_mappings",
+      "definition": "FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE RESTRICT"
+    },
+    {
+      "name": "connector_mappings_identity_config_object_check",
+      "table": "connector_mappings",
+      "definition": "CHECK ((jsonb_typeof(identity_config) = 'object'::text))"
+    },
+    {
+      "name": "connector_mappings_pkey",
+      "table": "connector_mappings",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "connector_mappings_schema_hash_check",
+      "table": "connector_mappings",
+      "definition": "CHECK ((source_schema_hash ~ '^[0-9a-f]{64}$'::text))"
+    },
+    {
+      "name": "connector_mappings_version_check",
+      "table": "connector_mappings",
+      "definition": "CHECK ((version > 0))"
+    },
+    {
+      "name": "connector_sync_state_checkpoint_object_check",
+      "table": "connector_sync_state",
+      "definition": "CHECK ((jsonb_typeof(checkpoint) = 'object'::text))"
+    },
+    {
+      "name": "connector_sync_state_connector_org_key",
+      "table": "connector_sync_state",
+      "definition": "UNIQUE (connector_id, organization_id)"
+    },
+    {
+      "name": "connector_sync_state_connector_scope_fkey",
+      "table": "connector_sync_state",
+      "definition": "FOREIGN KEY (connector_id, organization_id) REFERENCES connectors(id, organization_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "connector_sync_state_failures_check",
+      "table": "connector_sync_state",
+      "definition": "CHECK ((consecutive_failures >= 0))"
+    },
+    {
+      "name": "connector_sync_state_lease_check",
+      "table": "connector_sync_state",
+      "definition": "CHECK ((((lease_owner IS NULL) AND (lease_until IS NULL)) OR ((lease_owner IS NOT NULL) AND (lease_until IS NOT NULL))))"
+    },
+    {
+      "name": "connector_sync_state_pkey",
+      "table": "connector_sync_state",
+      "definition": "PRIMARY KEY (connector_id)"
+    },
+    {
+      "name": "connectors_configuration_object_check",
+      "table": "connectors",
+      "definition": "CHECK ((jsonb_typeof(configuration) = 'object'::text))"
+    },
+    {
+      "name": "connectors_created_by_fkey",
+      "table": "connectors",
+      "definition": "FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE RESTRICT"
+    },
+    {
+      "name": "connectors_credential_ref_check",
+      "table": "connectors",
+      "definition": "CHECK (((credential_ref IS NULL) OR ((char_length(credential_ref) >= 1) AND (char_length(credential_ref) <= 256))))"
+    },
+    {
+      "name": "connectors_dataset_scope_fkey",
+      "table": "connectors",
+      "definition": "FOREIGN KEY (dataset_id, process_id, organization_id) REFERENCES datasets(id, process_id, organization_id) ON DELETE RESTRICT"
+    },
+    {
+      "name": "connectors_id_organization_id_key",
+      "table": "connectors",
+      "definition": "UNIQUE (id, organization_id)"
+    },
+    {
+      "name": "connectors_id_process_dataset_org_key",
+      "table": "connectors",
+      "definition": "UNIQUE (id, process_id, dataset_id, organization_id)"
+    },
+    {
+      "name": "connectors_name_check",
+      "table": "connectors",
+      "definition": "CHECK (((char_length(TRIM(BOTH FROM name)) >= 2) AND (char_length(TRIM(BOTH FROM name)) <= 160)))"
+    },
+    {
+      "name": "connectors_pkey",
+      "table": "connectors",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "connectors_process_pack_check",
+      "table": "connectors",
+      "definition": "CHECK (((process_pack_id IS NULL) OR (process_pack_id = ANY (ARRAY['production'::text, 'orders'::text, 'deliveries'::text, 'tickets'::text, 'enrollment'::text, 'hiring'::text, 'approvals'::text, 'ecommerce'::text, 'generic'::text]))))"
+    },
+    {
+      "name": "connectors_process_scope_fkey",
+      "table": "connectors",
+      "definition": "FOREIGN KEY (process_id, organization_id) REFERENCES processes(id, organization_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "connectors_schedule_check",
+      "table": "connectors",
+      "definition": "CHECK ((((sync_mode = 'scheduled'::text) AND ((schedule_minutes >= 1) AND (schedule_minutes <= 10080))) OR ((sync_mode <> 'scheduled'::text) AND (schedule_minutes IS NULL))))"
+    },
+    {
+      "name": "connectors_status_check",
+      "table": "connectors",
+      "definition": "CHECK ((status = ANY (ARRAY['draft'::text, 'active'::text, 'paused'::text, 'needs_attention'::text, 'needs_reauth'::text, 'disabled'::text])))"
+    },
+    {
+      "name": "connectors_sync_mode_check",
+      "table": "connectors",
+      "definition": "CHECK ((sync_mode = ANY (ARRAY['manual'::text, 'scheduled'::text, 'push'::text])))"
+    },
+    {
+      "name": "connectors_type_check",
+      "table": "connectors",
+      "definition": "CHECK ((type = ANY (ARRAY['recurring_csv'::text, 'google_sheets'::text, 'rest_api'::text, 'webhook'::text, 'sql_database'::text])))"
+    },
+    {
+      "name": "datasets_case_count_check",
+      "table": "datasets",
+      "definition": "CHECK ((case_count >= 0))"
+    },
+    {
+      "name": "datasets_dataset_mode_check",
+      "table": "datasets",
+      "definition": "CHECK ((dataset_mode = ANY (ARRAY['snapshot'::text, 'live'::text])))"
+    },
+    {
+      "name": "datasets_id_organization_id_key",
+      "table": "datasets",
+      "definition": "UNIQUE (id, organization_id)"
+    },
+    {
+      "name": "datasets_id_process_id_organization_id_key",
+      "table": "datasets",
+      "definition": "UNIQUE (id, process_id, organization_id)"
+    },
+    {
+      "name": "datasets_live_source_check",
+      "table": "datasets",
+      "definition": "CHECK (((dataset_mode <> 'live'::text) OR (source_type = 'connector'::text)))"
+    },
+    {
+      "name": "datasets_name_check",
+      "table": "datasets",
+      "definition": "CHECK (((char_length(TRIM(BOTH FROM name)) >= 2) AND (char_length(TRIM(BOTH FROM name)) <= 180)))"
+    },
+    {
+      "name": "datasets_pkey",
+      "table": "datasets",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "datasets_process_id_organization_id_fkey",
+      "table": "datasets",
+      "definition": "FOREIGN KEY (process_id, organization_id) REFERENCES processes(id, organization_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "datasets_row_count_check",
+      "table": "datasets",
+      "definition": "CHECK ((row_count >= 0))"
+    },
+    {
+      "name": "datasets_source_type_check",
+      "table": "datasets",
+      "definition": "CHECK ((source_type = ANY (ARRAY['csv'::text, 'demo'::text, 'api'::text, 'connector'::text])))"
+    },
+    {
+      "name": "datasets_uploaded_by_fkey",
+      "table": "datasets",
+      "definition": "FOREIGN KEY (uploaded_by) REFERENCES auth.users(id) ON DELETE RESTRICT"
+    },
+    {
+      "name": "datasets_validation_status_check",
+      "table": "datasets",
+      "definition": "CHECK ((validation_status = ANY (ARRAY['pending'::text, 'valid'::text, 'invalid'::text])))"
+    },
+    {
+      "name": "insights_analysis_run_id_organization_id_fkey",
+      "table": "insights",
+      "definition": "FOREIGN KEY (analysis_run_id, organization_id) REFERENCES analysis_runs(id, organization_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "insights_check",
+      "table": "insights",
+      "definition": "CHECK (((analysis_run_id IS NOT NULL) OR (simulation_run_id IS NOT NULL)))"
+    },
+    {
+      "name": "insights_confidence_check",
+      "table": "insights",
+      "definition": "CHECK (((confidence IS NULL) OR ((confidence >= (0)::numeric) AND (confidence <= (100)::numeric))))"
+    },
+    {
+      "name": "insights_insight_type_check",
+      "table": "insights",
+      "definition": "CHECK ((insight_type = ANY (ARRAY['bottleneck'::text, 'anomaly'::text, 'opportunity'::text, 'simulation'::text])))"
+    },
+    {
+      "name": "insights_pkey",
+      "table": "insights",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "insights_process_id_organization_id_fkey",
+      "table": "insights",
+      "definition": "FOREIGN KEY (process_id, organization_id) REFERENCES processes(id, organization_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "insights_simulation_run_id_organization_id_fkey",
+      "table": "insights",
+      "definition": "FOREIGN KEY (simulation_run_id, organization_id) REFERENCES simulation_runs(id, organization_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "organization_members_organization_id_fkey",
+      "table": "organization_members",
+      "definition": "FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "organization_members_pkey",
+      "table": "organization_members",
+      "definition": "PRIMARY KEY (organization_id, user_id)"
+    },
+    {
+      "name": "organization_members_role_check",
+      "table": "organization_members",
+      "definition": "CHECK ((role = ANY (ARRAY['owner'::text, 'admin'::text, 'analyst'::text, 'viewer'::text])))"
+    },
+    {
+      "name": "organization_members_user_id_fkey",
+      "table": "organization_members",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "organizations_created_by_fkey",
+      "table": "organizations",
+      "definition": "FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE RESTRICT"
+    },
+    {
+      "name": "organizations_name_check",
+      "table": "organizations",
+      "definition": "CHECK (((char_length(TRIM(BOTH FROM name)) >= 2) AND (char_length(TRIM(BOTH FROM name)) <= 120)))"
+    },
+    {
+      "name": "organizations_pkey",
+      "table": "organizations",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "organizations_slug_check",
+      "table": "organizations",
+      "definition": "CHECK ((slug ~ '^[a-z0-9]+(?:-[a-z0-9]+)*$'::text))"
+    },
+    {
+      "name": "organizations_slug_key",
+      "table": "organizations",
+      "definition": "UNIQUE (slug)"
+    },
+    {
+      "name": "process_events_activity_check",
+      "table": "process_events",
+      "definition": "CHECK ((char_length(TRIM(BOTH FROM activity)) > 0))"
+    },
+    {
+      "name": "process_events_case_id_check",
+      "table": "process_events",
+      "definition": "CHECK ((char_length(TRIM(BOTH FROM case_id)) > 0))"
+    },
+    {
+      "name": "process_events_connector_provenance_check",
+      "table": "process_events",
+      "definition": "CHECK ((((connector_id IS NULL) AND (sync_run_id IS NULL) AND (source_event_key IS NULL) AND (source_payload_hash IS NULL) AND (source_updated_at IS NULL)) OR ((connector_id IS NOT NULL) AND (sync_run_id IS NOT NULL) AND (source_event_key IS NOT NULL) AND (source_payload_hash IS NOT NULL))))"
+    },
+    {
+      "name": "process_events_connector_scope_fkey",
+      "table": "process_events",
+      "definition": "FOREIGN KEY (connector_id, process_id, dataset_id, organization_id) REFERENCES connectors(id, process_id, dataset_id, organization_id) ON DELETE RESTRICT"
+    },
+    {
+      "name": "process_events_connector_source_key_key",
+      "table": "process_events",
+      "definition": "UNIQUE (connector_id, source_event_key)"
+    },
+    {
+      "name": "process_events_cost_check",
+      "table": "process_events",
+      "definition": "CHECK (((cost IS NULL) OR (cost >= (0)::numeric)))"
+    },
+    {
+      "name": "process_events_dataset_id_event_index_key",
+      "table": "process_events",
+      "definition": "UNIQUE (dataset_id, event_index)"
+    },
+    {
+      "name": "process_events_dataset_id_organization_id_fkey",
+      "table": "process_events",
+      "definition": "FOREIGN KEY (dataset_id, organization_id) REFERENCES datasets(id, organization_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "process_events_event_index_check",
+      "table": "process_events",
+      "definition": "CHECK ((event_index >= 0))"
+    },
+    {
+      "name": "process_events_pkey",
+      "table": "process_events",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "process_events_process_id_organization_id_fkey",
+      "table": "process_events",
+      "definition": "FOREIGN KEY (process_id, organization_id) REFERENCES processes(id, organization_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "process_events_source_event_key_check",
+      "table": "process_events",
+      "definition": "CHECK (((source_event_key IS NULL) OR ((char_length(source_event_key) >= 1) AND (char_length(source_event_key) <= 128))))"
+    },
+    {
+      "name": "process_events_source_payload_hash_check",
+      "table": "process_events",
+      "definition": "CHECK (((source_payload_hash IS NULL) OR (source_payload_hash ~ '^[0-9a-f]{64}$'::text)))"
+    },
+    {
+      "name": "process_events_sync_run_scope_fkey",
+      "table": "process_events",
+      "definition": "FOREIGN KEY (sync_run_id, connector_id, process_id, dataset_id, organization_id) REFERENCES sync_runs(id, connector_id, process_id, dataset_id, organization_id) ON DELETE RESTRICT"
+    },
+    {
+      "name": "process_models_analysis_run_id_key",
+      "table": "process_models",
+      "definition": "UNIQUE (analysis_run_id)"
+    },
+    {
+      "name": "process_models_analysis_run_id_organization_id_fkey",
+      "table": "process_models",
+      "definition": "FOREIGN KEY (analysis_run_id, organization_id) REFERENCES analysis_runs(id, organization_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "process_models_dataset_id_organization_id_fkey",
+      "table": "process_models",
+      "definition": "FOREIGN KEY (dataset_id, organization_id) REFERENCES datasets(id, organization_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "process_models_pkey",
+      "table": "process_models",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "process_models_process_id_organization_id_fkey",
+      "table": "process_models",
+      "definition": "FOREIGN KEY (process_id, organization_id) REFERENCES processes(id, organization_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "processes_created_by_fkey",
+      "table": "processes",
+      "definition": "FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE RESTRICT"
+    },
+    {
+      "name": "processes_id_organization_id_key",
+      "table": "processes",
+      "definition": "UNIQUE (id, organization_id)"
+    },
+    {
+      "name": "processes_name_check",
+      "table": "processes",
+      "definition": "CHECK (((char_length(TRIM(BOTH FROM name)) >= 2) AND (char_length(TRIM(BOTH FROM name)) <= 160)))"
+    },
+    {
+      "name": "processes_organization_id_fkey",
+      "table": "processes",
+      "definition": "FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "processes_pkey",
+      "table": "processes",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "processes_status_check",
+      "table": "processes",
+      "definition": "CHECK ((status = ANY (ARRAY['draft'::text, 'ready'::text, 'analyzing'::text, 'active'::text, 'archived'::text])))"
+    },
+    {
+      "name": "simulation_results_pkey",
+      "table": "simulation_results",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "simulation_results_process_id_organization_id_fkey",
+      "table": "simulation_results",
+      "definition": "FOREIGN KEY (process_id, organization_id) REFERENCES processes(id, organization_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "simulation_results_simulation_run_id_key",
+      "table": "simulation_results",
+      "definition": "UNIQUE (simulation_run_id)"
+    },
+    {
+      "name": "simulation_results_simulation_run_id_organization_id_fkey",
+      "table": "simulation_results",
+      "definition": "FOREIGN KEY (simulation_run_id, organization_id) REFERENCES simulation_runs(id, organization_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "simulation_runs_check",
+      "table": "simulation_runs",
+      "definition": "CHECK (((completed_at IS NULL) OR (started_at IS NULL) OR (completed_at >= started_at)))"
+    },
+    {
+      "name": "simulation_runs_created_by_fkey",
+      "table": "simulation_runs",
+      "definition": "FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE RESTRICT"
+    },
+    {
+      "name": "simulation_runs_id_organization_id_key",
+      "table": "simulation_runs",
+      "definition": "UNIQUE (id, organization_id)"
+    },
+    {
+      "name": "simulation_runs_iterations_check",
+      "table": "simulation_runs",
+      "definition": "CHECK (((iterations >= 1) AND (iterations <= 100000)))"
+    },
+    {
+      "name": "simulation_runs_pkey",
+      "table": "simulation_runs",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "simulation_runs_process_id_organization_id_fkey",
+      "table": "simulation_runs",
+      "definition": "FOREIGN KEY (process_id, organization_id) REFERENCES processes(id, organization_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "simulation_runs_scenario_id_organization_id_fkey",
+      "table": "simulation_runs",
+      "definition": "FOREIGN KEY (scenario_id, organization_id) REFERENCES simulation_scenarios(id, organization_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "simulation_runs_status_check",
+      "table": "simulation_runs",
+      "definition": "CHECK ((status = ANY (ARRAY['pending'::text, 'running'::text, 'completed'::text, 'failed'::text])))"
+    },
+    {
+      "name": "simulation_scenarios_baseline_analysis_run_id_organization_fkey",
+      "table": "simulation_scenarios",
+      "definition": "FOREIGN KEY (baseline_analysis_run_id, organization_id) REFERENCES analysis_runs(id, organization_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "simulation_scenarios_created_by_fkey",
+      "table": "simulation_scenarios",
+      "definition": "FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE RESTRICT"
+    },
+    {
+      "name": "simulation_scenarios_id_organization_id_key",
+      "table": "simulation_scenarios",
+      "definition": "UNIQUE (id, organization_id)"
+    },
+    {
+      "name": "simulation_scenarios_name_check",
+      "table": "simulation_scenarios",
+      "definition": "CHECK (((char_length(TRIM(BOTH FROM name)) >= 2) AND (char_length(TRIM(BOTH FROM name)) <= 180)))"
+    },
+    {
+      "name": "simulation_scenarios_pkey",
+      "table": "simulation_scenarios",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "simulation_scenarios_process_id_organization_id_fkey",
+      "table": "simulation_scenarios",
+      "definition": "FOREIGN KEY (process_id, organization_id) REFERENCES processes(id, organization_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "sync_runs_analysis_run_id_fkey",
+      "table": "sync_runs",
+      "definition": "FOREIGN KEY (analysis_run_id) REFERENCES analysis_runs(id) ON DELETE SET NULL"
+    },
+    {
+      "name": "sync_runs_analysis_status_check",
+      "table": "sync_runs",
+      "definition": "CHECK ((analysis_status = ANY (ARRAY['pending'::text, 'skipped'::text, 'succeeded'::text, 'failed'::text, 'superseded'::text])))"
+    },
+    {
+      "name": "sync_runs_checkpoint_after_object_check",
+      "table": "sync_runs",
+      "definition": "CHECK ((jsonb_typeof(checkpoint_after) = 'object'::text))"
+    },
+    {
+      "name": "sync_runs_checkpoint_before_object_check",
+      "table": "sync_runs",
+      "definition": "CHECK ((jsonb_typeof(checkpoint_before) = 'object'::text))"
+    },
+    {
+      "name": "sync_runs_completed_after_started_check",
+      "table": "sync_runs",
+      "definition": "CHECK (((completed_at IS NULL) OR (started_at IS NULL) OR (completed_at >= started_at)))"
+    },
+    {
+      "name": "sync_runs_connector_scope_fkey",
+      "table": "sync_runs",
+      "definition": "FOREIGN KEY (connector_id, process_id, dataset_id, organization_id) REFERENCES connectors(id, process_id, dataset_id, organization_id) ON DELETE RESTRICT"
+    },
+    {
+      "name": "sync_runs_counts_check",
+      "table": "sync_runs",
+      "definition": "CHECK (((fetched_count >= 0) AND (accepted_count >= 0) AND (duplicate_count >= 0) AND (updated_count >= 0) AND (invalid_count >= 0) AND (page_count >= 0)))"
+    },
+    {
+      "name": "sync_runs_id_organization_id_key",
+      "table": "sync_runs",
+      "definition": "UNIQUE (id, organization_id)"
+    },
+    {
+      "name": "sync_runs_identity_scope_key",
+      "table": "sync_runs",
+      "definition": "UNIQUE (id, connector_id, process_id, dataset_id, organization_id)"
+    },
+    {
+      "name": "sync_runs_mapping_id_fkey",
+      "table": "sync_runs",
+      "definition": "FOREIGN KEY (mapping_id) REFERENCES connector_mappings(id) ON DELETE RESTRICT"
+    },
+    {
+      "name": "sync_runs_pkey",
+      "table": "sync_runs",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "sync_runs_status_check",
+      "table": "sync_runs",
+      "definition": "CHECK ((status = ANY (ARRAY['queued'::text, 'running'::text, 'succeeded'::text, 'partial'::text, 'failed'::text, 'canceled'::text])))"
+    },
+    {
+      "name": "sync_runs_trigger_check",
+      "table": "sync_runs",
+      "definition": "CHECK ((trigger = ANY (ARRAY['manual'::text, 'scheduled'::text, 'webhook'::text, 'retry'::text])))"
+    }
+  ]
+}

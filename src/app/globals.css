@@ -405,6 +405,9 @@ th { color: var(--muted); }
 .home-actions {
   justify-content: flex-start;
 }
+.process-navigation { justify-content: flex-start; margin: 0 auto 24px; max-width: 1440px; }
+.pilot-checklist { padding-left: 24px; display: grid; gap: 20px; line-height: 1.7; }
+.pilot-checklist strong { color: var(--text); }
 
 @media (max-width: 600px) {
   .auth-page { padding: 18px; }

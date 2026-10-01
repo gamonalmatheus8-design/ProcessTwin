@@ -43,6 +43,11 @@ export default async function ProcessExplorerPage({
 
   return (
     <main className="explorer-page">
+      <nav className="actions process-navigation" aria-label="Navegação do processo">
+        <Link className="button secondary" href={`/processes/${processId}`}>Visão do processo</Link>
+        <Link className="button secondary" href={`/processes/${processId}/connectors`}>Conectores</Link>
+        <Link className="button secondary" href="/processes/new">Importar dados</Link>
+      </nav>
       <ProcessExplorer data={result.data} />
     </main>
   );

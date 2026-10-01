@@ -37,6 +37,7 @@ beforeAll(async () => {
   const exists = await pool.query("select to_regclass('public.connectors') as table");
   if (exists.rows[0].table) throw new Error("Test database must be empty; refusing to overwrite existing schema.");
   await pool.query(readFileSync("supabase/tests/bootstrap.sql", "utf8"));
+  await pool.query(readFileSync("supabase/baselines/20260930234128_foundation_baseline.sql", "utf8"));
   for (const file of readdirSync("supabase/migrations").filter((name) => name.endsWith(".sql")).sort()) await pool.query(readFileSync(`supabase/migrations/${file}`, "utf8"));
 });
 beforeEach(async () => {
@@ -51,6 +52,22 @@ beforeEach(async () => {
 afterAll(async () => { await pool.end(); });
 
 describe("real PostgreSQL recurring CSV RPCs", () => {
+  it("baseline refuses a nonempty application schema without modifying it", async () => {
+    await expect(pool.query(readFileSync("supabase/baselines/20260930234128_foundation_baseline.sql", "utf8"))).rejects.toThrow("empty public schema");
+    expect((await pool.query("select count(*)::int as n from public.organizations")).rows[0].n).toBe(1);
+  });
+  it("fresh baseline plus migrations reproduces the remote application schema contract", async () => {
+    const actual = (await pool.query(readFileSync("supabase/schema-contract.sql", "utf8"))).rows[0].contract;
+    expect(actual).toEqual(JSON.parse(readFileSync("supabase/baselines/schema-contract.json", "utf8")));
+  });
+  it("session roles cannot truncate tables or install triggers across tenant boundaries", async () => {
+    for (const user of [owner, analyst, viewer, outsider]) {
+      await expect(asUser(user, (c) => c.query("truncate public.process_events"))).rejects.toThrow("permission denied");
+    }
+    const grants = await pool.query("select grantee,table_name,privilege_type from information_schema.role_table_grants where table_schema='public' and grantee in ('authenticated','anon') and privilege_type in ('TRUNCATE','TRIGGER','REFERENCES')");
+    expect(grants.rows).toHaveLength(0);
+    expect((await pool.query("select count(*)::int as n from public.organizations")).rows[0].n).toBe(1);
+  });
   it("full service: private upload, real RPC, Core Cycle and durable model", async () => {
     const connector = await asUser(owner, (c) => create(c));
     const client = {

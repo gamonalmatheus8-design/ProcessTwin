@@ -20,6 +20,9 @@ export default function Home() {
           <Link className="button secondary" href="/demo">
             Ver demonstração
           </Link>
+          <Link className="button secondary" href="/pilot">
+            Planejar meu piloto
+          </Link>
         </div>
       </section>
     </main>

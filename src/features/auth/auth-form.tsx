@@ -9,6 +9,7 @@ type AuthMode = "login" | "signup";
 type Props = {
   initialMode?: AuthMode;
   initialMessage?: string;
+  nextPath?: string;
 };
 
 const normalizeError = (message: string, mode: AuthMode) => {
@@ -34,6 +35,7 @@ const normalizeError = (message: string, mode: AuthMode) => {
 export function AuthForm({
   initialMode = "login",
   initialMessage = "",
+  nextPath = "/processes/new",
 }: Props) {
   const router = useRouter();
   const [mode, setMode] = useState<AuthMode>(initialMode);
@@ -115,13 +117,13 @@ export function AuthForm({
         }
 
         await bootstrapAccount();
-        router.push("/processes/new");
+        router.push(nextPath);
         router.refresh();
         return;
       }
 
       const callbackUrl = new URL("/auth/callback", window.location.origin);
-      callbackUrl.searchParams.set("next", "/processes/new");
+      callbackUrl.searchParams.set("next", nextPath);
 
       const { data, error: signupError } = await supabase.auth.signUp({
         email: cleanEmail,
@@ -142,7 +144,7 @@ export function AuthForm({
 
       if (data.session) {
         await bootstrapAccount(organizationName.trim());
-        router.push("/processes/new");
+        router.push(nextPath);
         router.refresh();
         return;
       }
