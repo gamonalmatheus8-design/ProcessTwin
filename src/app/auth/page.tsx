@@ -21,18 +21,35 @@ export default async function AuthPage({
   return (
     <main className="auth-page">
       <div className="auth-shell">
-        <Link className="auth-brand" href="/">
-          <span className="eyebrow">ProcessTwin AI</span>
-          <strong>Digital Twin de Processos</strong>
-        </Link>
-        <AuthForm
-          initialMode={initialMode}
-          initialMessage={initialMessage}
-          nextPath={safeAuthNext(params.next)}
-        />
-        <Link className="text-link auth-demo-link" href="/demo">
-          Ver demonstração sem conta →
-        </Link>
+        <section className="pt-auth-visual">
+          <Link className="pt-home-brand" href="/">
+            <span className="pt-brand-mark" aria-hidden="true"><i /><i /><i /></span>
+            <strong>ProcessTwin AI</strong>
+          </Link>
+          <div>
+            <span className="eyebrow">Process intelligence, grounded in your data</span>
+            <h1>Transforme eventos operacionais em decisões melhores.</h1>
+            <p>
+              Reconstrua o processo real, encontre onde o trabalho para e simule
+              cenários com hipóteses explícitas antes de agir.
+            </p>
+          </div>
+          <div className="pt-proof-line">
+            <span><i /> Dados isolados por organização</span>
+            <span><i /> Análises reproduzíveis</span>
+          </div>
+        </section>
+
+        <section className="pt-auth-panel">
+          <AuthForm
+            initialMode={initialMode}
+            initialMessage={initialMessage}
+            nextPath={safeAuthNext(params.next)}
+          />
+          <Link className="auth-demo-link" href="/demo/center">
+            Explorar uma demonstração antes de entrar →
+          </Link>
+        </section>
       </div>
     </main>
   );
