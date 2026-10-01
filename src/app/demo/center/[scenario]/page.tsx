@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
+import { AppShell } from "@/components/layout/app-shell";
 import { isDemoId, demoStep } from "@/features/demo-center/datasets";
 import { getDemo } from "@/features/demo-center/model";
 import { DemoJourney } from "@/features/demo-center/demo-journey";
+
 export default async function DemoScenarioPage({
   params,
   searchParams,
@@ -11,13 +13,20 @@ export default async function DemoScenarioPage({
 }) {
   const [{ scenario }, query] = await Promise.all([params, searchParams]);
   if (!isDemoId(scenario)) notFound();
+  const demo = getDemo(scenario);
+
   return (
-    <DemoJourney
-      key={scenario}
-      demo={getDemo(scenario)}
-      initialStep={demoStep(
-        typeof query.step === "string" ? query.step : undefined,
-      )}
-    />
+    <AppShell
+      active="demos"
+      processName={demo.dataset.name}
+      eyebrow="Demo workspace / Guided analysis"
+      wide
+    >
+      <DemoJourney
+        key={scenario}
+        demo={demo}
+        initialStep={demoStep(typeof query.step === "string" ? query.step : undefined)}
+      />
+    </AppShell>
   );
 }
