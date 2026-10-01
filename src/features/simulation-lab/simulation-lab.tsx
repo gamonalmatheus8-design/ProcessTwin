@@ -37,8 +37,8 @@ function ResultPanel({ payload, result }: { payload: SimulationPayload; result: 
     <section className="simulation-result" aria-live="polite">
       <div className="simulation-section-heading">
         <div>
-          <span className="eyebrow">Atual × Simulado</span>
-          <h2>Impacto estimado</h2>
+          <span className="eyebrow">Simulation outcome</span>
+          <h2>Current State × Simulated State</h2>
         </div>
         <span className="sla-chip">SLA usado: {formatDuration(result.impactSummary.slaThresholdSeconds)}</span>
       </div>
@@ -46,19 +46,19 @@ function ResultPanel({ payload, result }: { payload: SimulationPayload; result: 
       <div className="simulation-kpis">
         <article>
           <span>Ciclo médio</span>
-          <dl><div><dt>Atual</dt><dd>{formatDuration(result.baseline.avgCycleSeconds)}</dd></div><div><dt>Simulado</dt><dd>{formatDuration(result.simulated.avgCycleSeconds)}</dd></div></dl>
+          <dl><div><dt>Current state</dt><dd>{formatDuration(result.baseline.avgCycleSeconds)}</dd></div><div><dt>Simulated state</dt><dd>{formatDuration(result.simulated.avgCycleSeconds)}</dd></div></dl>
           <strong>{formatPercent(result.deltas.avgCyclePct, true)}</strong>
           <ComparisonBar baseline={result.baseline.avgCycleSeconds} simulated={result.simulated.avgCycleSeconds} />
         </article>
         <article>
           <span>P95</span>
-          <dl><div><dt>Atual</dt><dd>{formatDuration(result.baseline.p95CycleSeconds)}</dd></div><div><dt>Simulado</dt><dd>{formatDuration(result.simulated.p95CycleSeconds)}</dd></div></dl>
+          <dl><div><dt>Current state</dt><dd>{formatDuration(result.baseline.p95CycleSeconds)}</dd></div><div><dt>Simulated state</dt><dd>{formatDuration(result.simulated.p95CycleSeconds)}</dd></div></dl>
           <strong>{formatPercent(result.deltas.p95CyclePct, true)}</strong>
           <ComparisonBar baseline={result.baseline.p95CycleSeconds} simulated={result.simulated.p95CycleSeconds} />
         </article>
         <article>
           <span>SLA</span>
-          <dl><div><dt>Atual</dt><dd>{formatPercent(result.baseline.slaCompliancePct)}</dd></div><div><dt>Simulado</dt><dd>{formatPercent(result.simulated.slaCompliancePct)}</dd></div></dl>
+          <dl><div><dt>Current state</dt><dd>{formatPercent(result.baseline.slaCompliancePct)}</dd></div><div><dt>Simulated state</dt><dd>{formatPercent(result.simulated.slaCompliancePct)}</dd></div></dl>
           <strong>{formatPercentagePoints(result.deltas.slaPercentagePoints)}</strong>
           <ComparisonBar baseline={result.baseline.slaCompliancePct} simulated={result.simulated.slaCompliancePct} />
         </article>
@@ -267,7 +267,7 @@ export function SimulationLab({
             <ResultPanel payload={resultPayload} result={result} />
           ) : (
             <div className="preview-card">
-              <span className="eyebrow">Preview da hipótese</span>
+              <span className="eyebrow">Simulation hypothesis</span>
               <h2>{activity}</h2>
               <p>Intervalo observado: <strong>{formatDuration(selectedNode?.avgIncomingWaitSeconds ?? 0)}</strong></p>
               <dl className="hypothesis-summary">
@@ -276,7 +276,7 @@ export function SimulationLab({
                 <div><dt>Fator efetivo</dt><dd>{effectiveFactor(waitReductionPct, capacityMultiplier).toFixed(2)}</dd></div>
               </dl>
               <p className="formula">intervalo simulado = intervalo observado × (1 − redução) ÷ capacidade relativa</p>
-              <div className="model-notice">Estimativa proporcional sobre intervalos observados.</div>
+              <div className="model-notice">Estimativa proporcional sobre intervalos observados. Resultado hipotético, não previsão garantida.</div>
             </div>
           )}
         </section>
