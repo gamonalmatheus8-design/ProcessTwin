@@ -117,7 +117,7 @@ export function ConnectorCenter({
     <div className="pt-connector-center" aria-busy={busy}>
       <header className="pt-page-heading">
         <div>
-          <span className="eyebrow">Connector Center</span>
+          <span className="eyebrow">Fontes de dados</span>
           <h1>Fontes do processo</h1>
           <p>
             Conecte fontes operacionais, acompanhe a saúde da sincronização e
@@ -133,7 +133,7 @@ export function ConnectorCenter({
       <section className="pt-dashboard-panel">
         <div className="pt-section-title">
           <div>
-            <span className="eyebrow">Add source</span>
+            <span className="eyebrow">Nova fonte</span>
             <h2>Conectar nova fonte</h2>
           </div>
           <p>Integrações futuras permanecem visíveis sem competir com fontes ativas.</p>
@@ -194,7 +194,7 @@ export function ConnectorCenter({
       <section>
         <div className="pt-section-title">
           <div>
-            <span className="eyebrow">Operational status</span>
+            <span className="eyebrow">Status operacional</span>
             <h2>Fontes conectadas</h2>
           </div>
           <p>{connectors.length} fonte(s) configurada(s)</p>
@@ -284,7 +284,7 @@ export function ConnectorCenter({
           </div>
         ) : (
           <div className="panel empty-state">
-            <span className="eyebrow">No sources yet</span>
+            <span className="eyebrow">Nenhuma fonte conectada</span>
             <h2>Conecte a primeira fonte operacional</h2>
             <p>CSV recorrente e Google Sheets já podem manter um dataset vivo para este processo.</p>
           </div>
@@ -293,7 +293,7 @@ export function ConnectorCenter({
 
       {uploadTo && (
         <section className="panel">
-          <span className="eyebrow">Recurring CSV</span>
+          <span className="eyebrow">CSV recorrente</span>
           <h2>Sincronizar novamente</h2>
           <p>O mesmo mapeamento e identidade serão reaplicados. Schema drift pausa a atualização antes de alterar eventos salvos.</p>
           <label>
@@ -333,7 +333,7 @@ export function ConnectorCenter({
       <section className="pt-dashboard-panel" id="sync-history">
         <div className="pt-section-title">
           <div>
-            <span className="eyebrow">Execution history</span>
+            <span className="eyebrow">Histórico de execução</span>
             <h2>Histórico de sincronizações</h2>
           </div>
           <p>Últimas 50 execuções</p>
