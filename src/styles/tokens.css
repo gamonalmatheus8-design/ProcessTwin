@@ -1,0 +1,46 @@
+:root {
+  color-scheme: dark;
+
+  --pt-bg: #0a0c0f;
+  --pt-bg-deep: #07090b;
+  --pt-surface: #101318;
+  --pt-surface-subtle: #0d1014;
+  --pt-surface-raised: #15191f;
+  --pt-surface-hover: #191e25;
+
+  --pt-border: rgba(255, 255, 255, 0.075);
+  --pt-border-strong: rgba(255, 255, 255, 0.14);
+
+  --pt-text: #f4f6f8;
+  --pt-text-secondary: #a1a8b3;
+  --pt-text-muted: #6f7782;
+
+  --pt-accent: #55c7b3;
+  --pt-accent-strong: #72d7c5;
+  --pt-accent-ink: #06110f;
+
+  --pt-success: #58c99b;
+  --pt-warning: #e8b55c;
+  --pt-danger: #ef7b7b;
+  --pt-info: #72a7ff;
+
+  --pt-radius-xs: 5px;
+  --pt-radius-sm: 7px;
+  --pt-radius-md: 10px;
+  --pt-radius-lg: 14px;
+
+  --pt-shadow-raised: 0 18px 45px rgba(0, 0, 0, 0.28);
+  --pt-shadow-overlay: 0 24px 80px rgba(0, 0, 0, 0.48);
+
+  --pt-sidebar: 236px;
+  --pt-topbar: 58px;
+  --pt-ease: cubic-bezier(.2,.8,.2,1);
+
+  /* Legacy semantic aliases while old screens are migrated. */
+  --background: var(--pt-bg);
+  --surface: var(--pt-surface);
+  --border: var(--pt-border);
+  --text: var(--pt-text);
+  --muted: var(--pt-text-secondary);
+  --accent: var(--pt-accent);
+}
