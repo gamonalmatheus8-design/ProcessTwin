@@ -775,3 +775,36 @@ tbody tr:hover { background: rgba(59,130,246,.025); }
   .pt-dashboard-preview-kpis div:nth-child(-n+2) { border-bottom: 1px solid rgba(255,255,255,.05); }
   .pt-home-nav-link { display: none; }
 }
+
+
+/* Guided demo controls remain visible inside the application shell. */
+.pt-main .fair-journey .fair-topbar {
+  display: flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 0 0 12px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  color: #77849a;
+  font-size: 10px;
+}
+.pt-main .fair-journey .fair-topbar > a {
+  color: #8996aa;
+}
+.pt-main .fair-journey .fair-topbar > a:hover {
+  color: #eef3fb;
+}
+.pt-main .fair-journey .fair-topbar .button {
+  margin: 0;
+}
+@media (max-width: 700px) {
+  .pt-main .fair-journey .fair-topbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .pt-main .fair-journey .fair-topbar .button {
+    width: 100%;
+  }
+}
