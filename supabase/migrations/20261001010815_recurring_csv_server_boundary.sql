@@ -8,7 +8,7 @@ create function private.sync_server_authorize(p_process uuid,p_actor uuid) retur
 language plpgsql security definer set search_path='' as $$
 declare v_org uuid;
 begin
-  if coalesce(current_setting('request.jwt.claims',true)::jsonb->>'role','') <> 'service_role' or p_actor is null
+  if current_user <> 'service_role' or p_actor is null
   then raise insufficient_privilege using message='Trusted server and actor required'; end if;
   select p.organization_id into v_org from public.processes p
   join public.organizations o on o.id=p.organization_id
