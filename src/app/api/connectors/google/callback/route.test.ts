@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 vi.mock("server-only", () => ({}));
 const mock = vi.hoisted(() => ({
   cookie: "nonce:11111111-1111-4111-8111-111111111111",
@@ -29,6 +29,7 @@ vi.mock("@/features/google-sheets/service", () => ({ sheetsRpc: mock.rpc }));
 import { GET } from "./route";
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.spyOn(console, "warn").mockImplementation(() => {});
   mock.cookie = "nonce:11111111-1111-4111-8111-111111111111";
   mock.access.mockResolvedValue({ writer: { actorId: "verified-owner" } });
   mock.rpc.mockResolvedValue("encrypted-state");
@@ -37,7 +38,33 @@ beforeEach(() => {
   });
   mock.info.mockResolvedValue({ scopes: ["readonly"] });
 });
+afterEach(() => vi.restoreAllMocks());
 describe("Google authorization callback state and token handling", () => {
+  it("logs only the failing stage and allowlisted provider code, never OAuth secrets", async () => {
+    mock.token.mockRejectedValueOnce({
+      message: "client-secret access-secret refresh-secret code nonce",
+      response: { data: { error: "invalid_client", error_description: "client-secret" } },
+      config: { data: "client_secret=client-secret&code=code" },
+    });
+    const response = await GET(new Request(
+      "https://app.example/api/connectors/google/callback?state=nonce&code=code",
+    ));
+    expect(response.headers.get("location")).toContain("google=failed");
+    expect(console.warn).toHaveBeenCalledWith("Google OAuth callback failed", {
+      stage: "token_exchange", providerError: "invalid_client",
+    });
+    const logged = JSON.stringify(vi.mocked(console.warn).mock.calls);
+    for (const secret of ["client-secret", "access-secret", "refresh-secret", "nonce"])
+      expect(logged).not.toContain(secret);
+    expect(mock.rpc).toHaveBeenCalledTimes(1);
+  });
+  it("does not log an unrecognized provider error value", async () => {
+    mock.token.mockRejectedValueOnce({ response: { data: { error: "secret-in-error" } } });
+    await GET(new Request("https://app.example/api/connectors/google/callback?state=nonce&code=code"));
+    expect(console.warn).toHaveBeenCalledWith("Google OAuth callback failed", {
+      stage: "token_exchange", providerError: "unclassified",
+    });
+  });
   it("rejects a mismatched browser nonce without exchanging the code", async () => {
     expect(
       (
