@@ -75,14 +75,17 @@ export function AppShell({
   return (
     <div className="pt-shell">
       <aside className="pt-sidebar" aria-label="Navegação principal">
-        <Link className="pt-brand pt-brand-simple" href="/">
-          <strong>ProcessTwin</strong>
-          <span>Process Operations</span>
+        <Link className="pt-brand" href="/">
+          <span className="pt-brand-mark" aria-hidden="true"><i /><i /><i /></span>
+          <span>
+            <strong>ProcessTwin</strong>
+            <small>Process Intelligence</small>
+          </span>
         </Link>
 
         {processName && (
           <div className="pt-process-context">
-            <span>Processo</span>
+            <span>Processo ativo</span>
             <strong title={processName}>{processName}</strong>
           </div>
         )}
@@ -91,17 +94,17 @@ export function AppShell({
           <div className="pt-nav-group">
             <span className="pt-nav-label">Processos</span>
             <NavItem href={overviewHref} icon="overview" label="Visão geral" active={active === "overview"} />
-            <NavItem href="/processes/new" icon="process" label="Importar dados" active={active === "intake"} />
+            <NavItem href="/processes/new" icon="process" label="Universal Intake" active={active === "intake"} />
           </div>
           <div className="pt-nav-group">
             <span className="pt-nav-label">Análise</span>
-            <NavItem href={explorerHref} icon="explorer" label="Explorador" active={active === "explorer"} />
-            <NavItem href={simulationHref} icon="simulation" label="Simulação" active={active === "simulation"} />
+            <NavItem href={explorerHref} icon="explorer" label="Process Explorer" active={active === "explorer"} />
+            <NavItem href={simulationHref} icon="simulation" label="Simulation Lab" active={active === "simulation"} />
           </div>
           <div className="pt-nav-group">
-            <span className="pt-nav-label">Dados</span>
-            <NavItem href={connectorsHref} icon="connector" label="Fontes de dados" active={active === "connectors"} />
-            <NavItem href={syncHref} icon="history" label="Histórico" />
+            <span className="pt-nav-label">Operações</span>
+            <NavItem href={connectorsHref} icon="connector" label="Connector Center" active={active === "connectors"} />
+            <NavItem href={syncHref} icon="history" label="Sync History" />
           </div>
           <div className="pt-nav-group">
             <span className="pt-nav-label">Recursos</span>
@@ -122,6 +125,10 @@ export function AppShell({
           <div className="pt-breadcrumb-bar">
             <span>{eyebrow}</span>
             {processName ? <><b>/</b><strong>{processName}</strong></> : null}
+          </div>
+          <div className="pt-topbar-status">
+            <i aria-hidden="true" />
+            <span>Workspace operacional</span>
           </div>
         </header>
         <div className={wide ? "pt-main pt-main-wide" : "pt-main"}>{children}</div>
