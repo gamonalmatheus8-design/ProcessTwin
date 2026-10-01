@@ -491,3 +491,5 @@ th { color: var(--muted); }
   .fair-pagination .button { flex: 1; }
   .fair-pagination > span { order: -1; width: 100%; text-align: center; }
 }
+.sheets-check { display: flex; align-items: center; gap: 12px; }
+.sheets-check input { width: auto; }

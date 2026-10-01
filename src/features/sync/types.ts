@@ -9,7 +9,8 @@ export type SyncRun = {
   started_at: string | null; completed_at: string | null; filename: string | null;
   fetched_count: number; accepted_count: number; updated_count: number; duplicate_count: number; invalid_count: number;
   analysis_status: "pending" | "skipped" | "succeeded" | "failed" | "superseded";
+  trigger?: string;
   analysis_run_id: string | null; error_message: string | null;
 };
-export type ConnectorCard = { id: string; name: string; type: string; status: string; dataset_id: string | null; datasetName: string; totalRuns: number; lastSync: string | null; lastSuccess: string | null };
+export type ConnectorCard = { id: string; name: string; type: string; status: string; dataset_id: string | null; datasetName: string; totalRuns: number; lastSync: string | null; lastSuccess: string | null; nextSync?: string | null };
 export type SyncResponse = { connectorId: string; datasetId: string; run: SyncRun; message: string; analysisExecuted: boolean };

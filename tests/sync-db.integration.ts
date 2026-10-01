@@ -315,3 +315,83 @@ describe("real PostgreSQL recurring CSV RPCs", () => {
     expect((await pool.query("select public from storage.buckets where id='process-datasets'")).rows[0].public).toBe(false);
   });
 });
+
+async function createSheet(schedule: number | null = 1440) {
+  return asServer(owner, async c => {
+    await c.query("select public.sheets_credential_server($1,$2,$3)", [owner,processId,'v1.'+'x'.repeat(80)]);
+    return (await c.query("select public.sheets_create_server($1,$2,$3,$4,'Test Sheets','orders',$5,$6,$7) as result", [owner,JSON.stringify({spreadsheetId:'a'.repeat(30),sheetName:'Orders',range:'bounded-v1'}),schedule,processId,JSON.stringify(demoSyncMapping),JSON.stringify(demoSyncIdentity),batch1.schemaHash])).rows[0].result;
+  });
+}
+async function startSheet(connectorId: string, trigger = 'manual') {
+  return asServer(owner, async c => (await c.query("select public.sheets_start_server($1,$2,$3,'test.csv') as result", [owner,connectorId,trigger])).rows[0].result);
+}
+describe('real Google Sheets server RPC and scheduling boundaries', () => {
+  it('isolates encrypted credentials and OAuth states from every session role and other tenants', async () => {
+    await createSheet();
+    for (const user of [owner,analyst,viewer,outsider]) {
+      await expect(asUser(user,c=>c.query("select * from private.sheets_credentials"))).rejects.toThrow('permission denied');
+      await expect(asUser(user,c=>c.query("select public.sheets_credential_server($1,$2)",[user,processId]))).rejects.toThrow('permission denied');
+    }
+    await expect(asServer(outsider,c=>c.query("select public.sheets_credential_server($1,$2)",[outsider,processId]))).rejects.toThrow('Owner/admin');
+  });
+  it('binds expiring OAuth state to the actor and process and consumes it exactly once', async () => {
+    const hash = 'a'.repeat(64);
+    await asServer(owner,c=>c.query("select public.sheets_oauth_state_server($1,$2,$3,'cipher')",[owner,processId,hash]));
+    await expect(asServer(outsider,c=>c.query("select public.sheets_oauth_state_server($1,$2,$3)",[outsider,processId,hash]))).rejects.toThrow();
+    const result = await asServer(owner,c=>c.query("select public.sheets_oauth_state_server($1,$2,$3) as token",[owner,processId,hash]));
+    expect(result.rows[0].token).toBe('cipher');
+    await expect(asServer(owner,c=>c.query("select public.sheets_oauth_state_server($1,$2,$3)",[owner,processId,hash]))).rejects.toThrow('Invalid OAuth');
+    await asServer(owner,c=>c.query("select public.sheets_oauth_state_server($1,$2,$3,'cipher')",[owner,processId,hash]));
+    await pool.query("update private.sheets_oauth_states set expires_at=now()-interval '1 second'");
+    await expect(asServer(owner,c=>c.query("select public.sheets_oauth_state_server($1,$2,$3)",[owner,processId,hash]))).rejects.toThrow('Invalid OAuth');
+  });
+  it('serializes manual and scheduled starts and recovers abandoned executions', async () => {
+    const sheet = await createSheet();
+    const results = await Promise.allSettled([startSheet(sheet.connectorId),startSheet(sheet.connectorId,'scheduled')]);
+    expect(results.filter(r=>r.status==='fulfilled')).toHaveLength(1);
+    expect((await pool.query("select count(*)::int n from public.sync_runs where status='running'")).rows[0].n).toBe(1);
+    await pool.query("update public.sync_runs set started_at=now()-interval '6 minutes'");
+    await startSheet(sheet.connectorId);
+    expect((await pool.query("select error_code from public.sync_runs where status='failed'")).rows[0].error_code).toBe('request_expired');
+  });
+  it('merges archived Sheets events idempotently and derives the complete snapshot', async () => {
+    const sheet = await createSheet(); const first = await startSheet(sheet.connectorId);
+    const merged = await asServer(owner,c=>merge(c,first)); expect(merged.accepted_count).toBe(100);
+    const snapshot = await asServer(owner,async c=>(await c.query("select public.sheets_snapshot_server($1,$2) as result",[owner,first.id])).rows[0].result);
+    expect(snapshot.events).toHaveLength(100);
+    await asServer(owner,c=>c.query("select public.recurring_csv_analysis_server($1,$2,$3,$4)",[owner,first.id,snapshot.revision,JSON.stringify(runCoreCycle(snapshot.events))]));
+    const second=await startSheet(sheet.connectorId); const duplicate=await asServer(owner,c=>merge(c,second));
+    expect(duplicate.duplicate_count).toBe(100); expect(duplicate.analysis_status).toBe('skipped');
+    expect((await pool.query("select count(*)::int n from public.analysis_runs")).rows[0].n).toBe(1);
+  });
+  it('schema drift stops scheduling; explicit review versions the mapping and preserves identity', async () => {
+    const sheet=await createSheet(); const run=await startSheet(sheet.connectorId);
+    await asServer(owner,c=>c.query("select public.sheets_fail_server($1,$2,'schema_drift',0,0)",[owner,run.id]));
+    expect((await pool.query("select status from public.connectors where id=$1",[sheet.connectorId])).rows[0].status).toBe('needs_attention');
+    await pool.query("update public.connector_sync_state set next_sync_at=now()-interval '1 day'");
+    expect((await asServer(owner,c=>c.query("select public.sheets_due_server() as result"))).rows[0].result).toEqual([]);
+    await expect(startSheet(sheet.connectorId)).rejects.toThrow();
+    await expect(asUser(owner,c=>c.query("update public.connector_mappings set canonical_mapping='{}' where connector_id=$1",[sheet.connectorId]))).rejects.toThrow('frozen');
+    await asServer(owner,c=>c.query("select public.sheets_control_server($1,$2,'review',$3,$4)",[owner,sheet.connectorId,JSON.stringify(demoSyncMapping),batch1.schemaHash]));
+    const mappings=(await pool.query("select version,active,identity_config from public.connector_mappings where connector_id=$1 order by version",[sheet.connectorId])).rows;
+    expect(mappings.map(m=>[m.version,m.active])).toEqual([[1,false],[2,true]]); expect(mappings[1].identity_config).toEqual(demoSyncIdentity);
+    const resumed=await startSheet(sheet.connectorId); const merged=await asServer(owner,c=>merge(c,resumed)); expect(merged.accepted_count).toBe(100);
+  });
+  it('limits recurring temporary failures and rechecks revoked scheduled actor permissions', async () => {
+    const sheet=await createSheet();
+    for(let n=0;n<3;n++){const run=await startSheet(sheet.connectorId);await asServer(owner,c=>c.query("select public.sheets_fail_server($1,$2,'source_temporary',0,0)",[owner,run.id]));}
+    expect((await pool.query("select status from public.connectors where id=$1",[sheet.connectorId])).rows[0].status).toBe('needs_attention');
+    const another=await createSheet(null);
+    await pool.query("update public.organizations set created_by=$1 where id=$2",[outsider,org]);
+    await pool.query("update public.organization_members set role='viewer' where user_id=$1",[owner]);
+    await expect(startSheet(another.connectorId)).rejects.toThrow('Owner/admin');
+    expect((await pool.query("select count(*)::int n from public.process_events")).rows[0].n).toBe(0);
+  });
+  it('requires reauthorization after disconnect and enforces the bounded daily pilot capacity', async () => {
+    await createSheet();await createSheet();await createSheet();
+    await expect(createSheet()).rejects.toThrow('capacity');
+    await asServer(owner,c=>c.query("select public.sheets_credential_server($1,$2,null,true)",[owner,processId]));
+    expect((await pool.query("select count(*)::int n from private.sheets_credentials")).rows[0].n).toBe(0);
+    expect((await pool.query("select count(*)::int n from public.connectors where status='needs_reauth'")).rows[0].n).toBe(3);
+  });
+});
