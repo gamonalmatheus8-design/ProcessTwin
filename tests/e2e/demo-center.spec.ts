@@ -142,12 +142,35 @@ for (const id of demoIds)
       }),
     ).toBeVisible();
     await page
-      .getByRole("button", { name: "4 Simulação", exact: true })
+      .getByRole("navigation", { name: "Etapas da apresentação" })
+      .getByRole("button")
+      .nth(3)
       .click();
     await expect(slider).toHaveValue("30");
     await expect(
       page.getByRole("combobox", { name: "Capacidade estimada" }),
     ).toHaveValue("1");
+    for (let index = 0; index < 5; index++) {
+      await page
+        .getByRole("navigation", { name: "Etapas da apresentação" })
+        .getByRole("button")
+        .nth(index)
+        .click();
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= window.innerWidth,
+        ),
+      ).toBe(true);
+    }
+    await page
+      .getByRole("navigation", { name: "Etapas da apresentação" })
+      .getByRole("button")
+      .nth(1)
+      .click();
+    await page.screenshot({
+      path: info.outputPath(`${id}-process-mobile.png`),
+      fullPage: true,
+    });
     expect(errors).toEqual([]);
   });
 test("invalid demonstration returns a recoverable 404", async ({ page }) => {
